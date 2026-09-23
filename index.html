@@ -1,0 +1,2037 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<title>Diário do Atom</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Diário de bordo do Atom, robô de mini sumô da equipe de Engenharia de Software da UVV para o Sumô Tech Fight do InovaWeek 2026.">
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root{
+    --ground:#eceef2; --surface:#ffffff; --surface2:#f6f7f9; --sunken:#e4e7ec;
+    --ink:#14171c; --ink2:#525a66; --line:#d5dae1; --line2:#bfc6d0;
+    --accent:#b85f16; --accent-ink:#8d4710; --accent-soft:#fbead9;
+    --data:#0c6272; --data-soft:#dff0f3;
+    --bad:#a0211f; --bad-soft:#fbe4e2;
+    --good:#166a44; --good-soft:#ddf0e6;
+    --shadow:0 1px 2px rgba(20,23,28,.06), 0 8px 24px -12px rgba(20,23,28,.18);
+    --display:'Archivo', 'Segoe UI', system-ui, sans-serif;
+    --body:'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+    --mono:'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0f1216; --surface:#171b21; --surface2:#1c212a; --sunken:#0b0e12;
+      --ink:#e8ebef; --ink2:#a0a9b5; --line:#2a313b; --line2:#3a434f;
+      --accent:#e08c42; --accent-ink:#f0a869; --accent-soft:#33241a;
+      --data:#54c2d2; --data-soft:#14303a;
+      --bad:#f0928c; --bad-soft:#3a1e1e;
+      --good:#6cc99c; --good-soft:#16321f;
+      --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 30px -14px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0f1216; --surface:#171b21; --surface2:#1c212a; --sunken:#0b0e12;
+    --ink:#e8ebef; --ink2:#a0a9b5; --line:#2a313b; --line2:#3a434f;
+    --accent:#e08c42; --accent-ink:#f0a869; --accent-soft:#33241a;
+    --data:#54c2d2; --data-soft:#14303a;
+    --bad:#f0928c; --bad-soft:#3a1e1e;
+    --good:#6cc99c; --good-soft:#16321f;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 30px -14px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--ground); color:var(--ink);
+    font-family:var(--body); font-size:17px; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding-inline:20px}
+  h1,h2,h3,h4{font-family:var(--display); text-wrap:balance; line-height:1.15; margin:0}
+  p{margin:0 0 1em}
+  p:last-child{margin-bottom:0}
+  a{color:var(--accent-ink); text-underline-offset:3px}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+  .eyebrow{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink2); margin:0 0 10px;
+  }
+
+  /* ---------- capa ---------- */
+  header.capa{padding-block:44px 30px; border-bottom:1px solid var(--line)}
+  header.capa h1{font-size:clamp(34px,7vw,60px); font-weight:800; letter-spacing:-.02em}
+  header.capa .sub{
+    font-size:19px; color:var(--ink2); max-width:60ch; margin-top:14px;
+  }
+  .ficha{
+    margin-top:28px; display:grid; gap:1px; background:var(--line);
+    border:1px solid var(--line); border-radius:6px; overflow:hidden;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  }
+  .ficha div{background:var(--surface); padding:12px 14px}
+  .ficha dt{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink2); margin-bottom:3px;
+  }
+  .ficha dd{margin:0; font-family:var(--display); font-weight:600; font-size:17px}
+  .ficha dd small{font-weight:500; color:var(--ink2); font-size:13px}
+
+  /* ---------- navegação ---------- */
+  nav.indice{
+    position:sticky; top:env(safe-area-inset-top, 0px); z-index:20;
+    background:var(--ground);
+    background:color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+  }
+  nav.indice ul{
+    max-width:1080px; margin:0 auto; padding:0 20px; list-style:none;
+    display:flex; gap:4px; overflow-x:auto; scrollbar-width:none;
+  }
+  nav.indice ul::-webkit-scrollbar{display:none}
+  nav.indice a{
+    display:block; padding:11px 10px; white-space:nowrap; text-decoration:none;
+    font-family:var(--mono); font-size:12.5px; color:var(--ink2); border-bottom:2px solid transparent;
+  }
+  nav.indice a:hover{color:var(--ink)}
+  nav.indice a.ativo{color:var(--accent-ink); border-bottom-color:var(--accent)}
+
+  /* ---------- seções ---------- */
+  section{padding-block:54px; border-bottom:1px solid var(--line)}
+  section > .cabeca{margin-bottom:26px}
+  section h2{font-size:clamp(24px,3.4vw,33px); font-weight:700; letter-spacing:-.015em}
+  section h2 + p{color:var(--ink2); margin-top:10px; max-width:66ch}
+  h3{font-size:19px; font-weight:700; margin:30px 0 10px}
+  h4{font-size:15px; font-weight:700; margin:0 0 6px}
+  .corpo{max-width:68ch}
+
+  /* ---------- 3d ---------- */
+  .visor{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    overflow:hidden; box-shadow:var(--shadow);
+  }
+  .palco{
+    position:relative; width:100%; aspect-ratio:16/10; min-height:260px;
+    background:radial-gradient(120% 100% at 50% 0%, var(--surface2) 0%, var(--sunken) 100%);
+    touch-action:none; cursor:grab;
+  }
+  .palco.arrastando{cursor:grabbing}
+  .palco canvas{display:block; width:100%; height:100%}
+  .palco .dica{
+    position:absolute; left:12px; bottom:10px; font-family:var(--mono); font-size:11px;
+    color:var(--ink2); background:var(--surface);
+    background:color-mix(in srgb, var(--surface) 75%, transparent);
+    padding:3px 8px; border-radius:4px; pointer-events:none;
+  }
+  .palco .carregando{
+    position:absolute; inset:0; display:grid; place-content:center; gap:8px; text-align:center;
+    font-family:var(--mono); font-size:12px; color:var(--ink2);
+  }
+  .comandos{
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    padding:12px; border-top:1px solid var(--line); background:var(--surface);
+  }
+  .grupo-botoes{display:flex; gap:4px; align-items:center}
+  .grupo-botoes + .grupo-botoes{
+    margin-left:4px; padding-left:12px; border-left:1px solid var(--line);
+  }
+  .rotulo{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink2); margin-right:4px;
+  }
+  button{font:inherit; color:inherit}
+  .bt{
+    font-family:var(--mono); font-size:13px; line-height:1;
+    background:var(--surface2); color:var(--ink); border:1px solid var(--line2);
+    border-radius:5px; padding:8px 11px; cursor:pointer; min-width:34px;
+  }
+  .bt:hover{border-color:var(--accent); color:var(--accent-ink)}
+  .bt[aria-pressed="true"]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent-ink)}
+  .bt.seta{font-size:15px; padding:7px 11px}
+
+  /* ---------- linha do tempo ---------- */
+  .ata{
+    display:grid; grid-template-columns:104px 1fr; gap:22px;
+    padding-block:20px; border-top:1px dashed var(--line);
+  }
+  .ata:first-of-type{border-top:0}
+  .ata .quando{
+    font-family:var(--mono); font-size:12px; color:var(--ink2); line-height:1.5;
+  }
+  .ata .quando b{display:block; color:var(--accent-ink); font-size:14px; font-weight:600}
+  .ata h3{margin:0 0 6px; font-size:18px}
+  .ata p{max-width:64ch}
+  @media (max-width:720px){
+    .ata{grid-template-columns:1fr; gap:6px}
+    .ata .quando b{display:inline; margin-right:8px}
+  }
+
+  /* ---------- tabelas ---------- */
+  .tabela{overflow-x:auto; border:1px solid var(--line); border-radius:8px; background:var(--surface)}
+  table{border-collapse:collapse; width:100%; font-family:var(--mono); font-size:13.5px}
+  th,td{padding:9px 12px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap}
+  th{
+    font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink2);
+    background:var(--surface2); font-weight:600;
+  }
+  tbody tr:last-child td{border-bottom:0}
+  td.txt{font-family:var(--body); white-space:normal; min-width:16ch}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* ---------- galeria ---------- */
+  .galeria{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  figure{margin:0; background:var(--surface); border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  figure img{display:block; width:100%; background:#fff; cursor:zoom-in}
+  figcaption{padding:9px 12px; font-size:13.5px; color:var(--ink2); border-top:1px solid var(--line)}
+  figcaption b{color:var(--ink); font-family:var(--display); font-size:13px; font-weight:600; display:block}
+  .lupa{
+    position:fixed; inset:0; z-index:60; background:rgba(8,10,13,.86);
+    display:grid; place-items:center; padding:24px; cursor:zoom-out;
+  }
+  .lupa img{max-width:100%; max-height:88vh; background:#fff; border-radius:6px}
+  .lupa p{
+    position:absolute; bottom:16px; left:0; right:0; text-align:center; color:#eceef2;
+    font-family:var(--mono); font-size:12px; margin:0; padding-inline:20px;
+  }
+
+  /* ---------- problemas ---------- */
+  .problema{
+    background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--bad);
+    border-radius:8px; padding:16px 18px; margin-bottom:12px;
+  }
+  .problema h3{margin:0 0 4px; font-size:17px}
+  .problema .etiqueta{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink2);
+  }
+  .problema .causa, .problema .solucao{margin-top:10px; font-size:15.5px; line-height:1.55}
+  .problema .causa b, .problema .solucao b{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    display:block; margin-bottom:2px;
+  }
+  .problema .causa b{color:var(--bad)}
+  .problema .solucao b{color:var(--good)}
+
+  /* ---------- diagramas e notas ---------- */
+  .figura{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:14px; overflow-x:auto}
+  .figura svg{display:block; width:100%; height:auto; min-width:440px}
+  .nota{
+    background:var(--data-soft); border:1px solid color-mix(in srgb, var(--data) 30%, transparent);
+    border-radius:8px; padding:14px 16px; font-size:15.5px; line-height:1.55;
+  }
+  .nota b{font-family:var(--display)}
+  .lista{padding-left:20px; margin:0}
+  .lista li{margin-bottom:7px}
+  .lista li:last-child{margin-bottom:0}
+  code{font-family:var(--mono); font-size:.9em; background:var(--surface2); padding:1px 5px; border-radius:4px}
+
+  /* ---------- código ---------- */
+  details.codigo{background:var(--surface); border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  details.codigo > summary{
+    cursor:pointer; padding:14px 16px; font-family:var(--display); font-weight:600; font-size:16px;
+    display:flex; justify-content:space-between; gap:12px; align-items:center; list-style:none;
+  }
+  details.codigo > summary::-webkit-details-marker{display:none}
+  details.codigo > summary span{font-family:var(--mono); font-size:12px; color:var(--ink2); font-weight:400}
+  details.codigo[open] > summary{border-bottom:1px solid var(--line)}
+  .barra-codigo{
+    display:flex; gap:10px; align-items:center; justify-content:space-between;
+    padding:10px 14px; background:var(--surface2); border-bottom:1px solid var(--line);
+    font-family:var(--mono); font-size:11.5px; color:var(--ink2);
+  }
+  pre{
+    margin:0; padding:16px; overflow:auto; max-height:70vh; background:var(--sunken);
+    font-family:var(--mono); font-size:12.5px; line-height:1.55; tab-size:2;
+  }
+  pre code{background:none; padding:0; font-size:inherit}
+  .c{color:var(--ink2); font-style:italic}
+  .s{color:var(--good)}
+  .k{color:var(--accent-ink); font-weight:600}
+  .n{color:var(--data)}
+
+  footer{padding-block:34px 60px; color:var(--ink2); font-size:14.5px}
+  footer p{max-width:66ch}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="capa">
+    <p class="eyebrow">Sumô Tech Fight · InovaWeek 2026 · UVV</p>
+    <h1>Diário do Atom</h1>
+    <p class="sub">O caderno do nosso mini sumô: o robô de 95 × 95 mm, a eletrônica, o código que
+      está gravado hoje e, principalmente, cada problema que apareceu no caminho e como a gente
+      resolveu. De 11 a 23 de setembro de 2026.</p>
+    <dl class="ficha">
+      <div><dt>Nome</dt><dd>Atom <small>apelido: Frankenstein</small></dd></div>
+      <div><dt>Tamanho</dt><dd class="num">95 × 95 mm <small>limite: 100</small></dd></div>
+      <div><dt>Altura montado</dt><dd class="num">45,3 mm</dd></div>
+      <div><dt>Placa</dt><dd>Arduino Nano <small>ATmega328P</small></dd></div>
+      <div><dt>Motores</dt><dd>N20 200 RPM <small>rodas 22 mm</small></dd></div>
+      <div><dt>Sensores</dt><dd>2× HC-SR04 <small>+ 2× TCRT5000</small></dd></div>
+      <div><dt>Energia</dt><dd>2× 18650 <small>+ LM2596 em 5 V</small></dd></div>
+      <div><dt>Programa</dt><dd class="num">11.750 B <small>38% do Nano</small></dd></div>
+      <div><dt>Versão gravada</dt><dd>Backup 2 <small>22/09</small></dd></div>
+    </dl>
+  </header>
+</div>
+
+<nav class="indice" aria-label="Seções">
+  <ul>
+    <li><a href="#robo3d">Robô em 3D</a></li>
+    <li><a href="#frankenstein">Frankenstein</a></li>
+    <li><a href="#equipe">Equipe</a></li>
+    <li><a href="#tempo">Linha do tempo</a></li>
+    <li><a href="#modelo">Modelo 3D</a></li>
+    <li><a href="#eletronica">Eletrônica</a></li>
+    <li><a href="#codigo">Código</a></li>
+    <li><a href="#problemas">Problemas</a></li>
+    <li><a href="#energia">Energia</a></li>
+    <li><a href="#novo">Robô novo</a></li>
+  </ul>
+</nav>
+
+<div class="wrap">
+
+  <section id="robo3d">
+    <div class="cabeca">
+      <p class="eyebrow">Atom · o desenho que foi para a impressora</p>
+      <h2>O robô em 3D</h2>
+      <p>Arraste para girar, ou use as setinhas. São os STLs de verdade que foram impressos:
+        9.988 triângulos na base e 7.108 na tampa. O robô que ficou pronto não é bem assim —
+        a história está logo abaixo.</p>
+    </div>
+
+    <div class="visor">
+      <div class="palco" id="palco" tabindex="0" role="img"
+           aria-label="Modelo 3D do robô: base impressa com a tampa por cima. Use as setas do teclado para girar.">
+        <div class="carregando" id="carregando">carregando o modelo…</div>
+        <span class="dica">arraste para girar · roda do mouse para aproximar</span>
+      </div>
+      <div class="comandos">
+        <span class="rotulo">Girar</span>
+        <div class="grupo-botoes">
+          <button class="bt seta" id="bt-esq" title="Girar para a esquerda" aria-label="Girar para a esquerda">←</button>
+          <button class="bt seta" id="bt-dir" title="Girar para a direita" aria-label="Girar para a direita">→</button>
+          <button class="bt seta" id="bt-cima" title="Olhar de cima" aria-label="Olhar de cima">↑</button>
+          <button class="bt seta" id="bt-baixo" title="Olhar de baixo" aria-label="Olhar de baixo">↓</button>
+        </div>
+        <div class="grupo-botoes">
+          <span class="rotulo">Zoom</span>
+          <button class="bt" id="bt-mais" title="Aproximar" aria-label="Aproximar">+</button>
+          <button class="bt" id="bt-menos" title="Afastar" aria-label="Afastar">−</button>
+        </div>
+        <div class="grupo-botoes">
+          <button class="bt" id="bt-separar" aria-pressed="false">Separar peças</button>
+          <button class="bt" id="bt-tampa" aria-pressed="true">Tampa</button>
+          <button class="bt" id="bt-reset">Vista inicial</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="nota" style="margin-top:18px">
+      <b>Como o robô é por dentro.</b> Motores, rodas, bateria e sensores ficam dentro da base
+      (95 × 95 × 34 mm). Na frente há quatro furos: são os dois transdutores de cada HC-SR04.
+      A tampa (95 × 85 × 11,3 mm) fecha por cima e é nela que ficam parafusados o Nano, o LM2596
+      e o L298N. Fechado, o corpo tem 45,3 mm de altura — a regra limita largura e comprimento
+      a 10 cm, mas não a altura.
+    </div>
+  </section>
+
+  <section id="frankenstein">
+    <div class="cabeca">
+      <p class="eyebrow">Curiosidade da equipe</p>
+      <h2>Por que a gente chama ele de Frankenstein</h2>
+      <p>No papel o Atom é aquele modelo limpo aí de cima. Na bancada ele é outra coisa.</p>
+    </div>
+
+    <div class="corpo">
+      <p>O nome do robô é <b>Atom</b>. O apelido, que ficou, é <b>Frankenstein</b> — e é pela
+        característica, não pela cor: o monstro é verde e o Atom é <b>azul</b>. O que os dois
+        têm em comum é o resto: remendo por toda parte, costura à mostra e parafuso aparecendo.
+        E o apelido é justo.</p>
+
+      <p>Quando as peças saíram da impressora, vieram com defeito. Coisa da impressora, não do
+        desenho: partes que não fecharam direito, medida que saiu torta, furo que não ficou
+        redondo. Só que não dava para imprimir tudo de novo e esperar mais um dia. Então a gente
+        remendou: <b>lixou</b> o que estava sobrando, <b>abriu buraco novo</b> onde o furo não
+        serviu e <b>prendeu tudo com parafuso por fora</b>, aparecendo. Ficou feio e ficou firme.
+        Cada cicatriz dessas é uma peça que a gente salvou em vez de jogar fora.</p>
+
+      <p>E tem os fios. Cada peça trocada pedia um remendo novo, então eles foram ficando por
+        fora mesmo, todos passados com fita, correndo por cima do robô. De longe parece um
+        <b>cérebro do lado de fora</b> — é isso que fecha o apelido.</p>
+
+      <p>E não foi só o plástico. Pelo caminho o robô também trocou de órgãos:</p>
+
+      <ul class="lista">
+        <li><b>A ponte H queimou.</b> A saída do motor direito parou de funcionar no L298N.
+          O motor estava bom, o fio estava bom — a porta é que tinha ido embora. Trocamos a
+          ponte H inteira.</li>
+        <li><b>Os motores queimaram na solda.</b> Isso foi medo de soldar: a gente estava com
+          receio de errar, demorou no ferro, e o calor acabou com os motores. Queimamos e
+          tivemos que comprar outros.</li>
+        <li><b>Depois de perder o motor, perdemos o medo.</b> Ninguém mais tremeu na mão: a
+          equipe soldou o Arduino todo sozinha, sem pedir ajuda para ninguém. O que era o maior
+          medo virou a parte que a gente mais aprendeu.</li>
+        <li><b>E as rodas ganharam borrachinha.</b> Dez em cada uma, por baixo do pneu, na
+          véspera da qualificação — foi assim que o robô parou de patinar. A história inteira
+          está lá embaixo, nos problemas.</li>
+      </ul>
+
+      <p>Por isso o modelo 3D desta página é o Atom bonito, o do desenho. O Frankenstein é o que
+        entra no dojô: remendado, parafusado por fora e funcionando.</p>
+    </div>
+
+    <h3>O Frankenstein de verdade</h3>
+    <div class="galeria">
+      <figure><img src="img/fotos/frente.jpg" alt="Frente do robô azul com os quatro furos dos transdutores, um parafuso alto à mostra e o sensor de linha pendurado na lateral" loading="lazy">
+        <figcaption><b>De frente</b>Os quatro furos dos transdutores, o parafuso que ficou à mostra e, na lateral, o sensor de linha pendurado pelos fios.</figcaption></figure>
+      <figure><img src="img/fotos/eletronica.jpg" alt="Vista de cima da eletrônica: ponte H com dissipador, LM2596, chave liga-desliga e muitos fios" loading="lazy">
+        <figcaption><b>O cérebro por fora</b>Ponte H com dissipador, LM2596, chave liga/desliga e o fio passando por cima de tudo.</figcaption></figure>
+      <figure><img src="img/fotos/nano_soldado.jpg" alt="Arduino Nano com fios soldados um a um nos pinos" loading="lazy">
+        <figcaption><b>Soldado à mão</b>O Nano com fio soldado pino a pino — feito pela equipe depois que o medo da solda passou.</figcaption></figure>
+      <figure><img src="img/fotos/nano_usb.jpg" alt="Nano ligado pelo cabo USB, com os LEDs acesos, preso na base azul" loading="lazy">
+        <figcaption><b>Ligado</b>LED aceso, cabo USB espetado: hora de gravar mais uma versão do código.</figcaption></figure>
+      <figure><img src="img/fotos/ponte_h.jpg" alt="Módulo L298N parafusado na base, com os capacitores e o LED aceso" loading="lazy">
+        <figcaption><b>A ponte H nova</b>A que entrou no lugar da que queimou a saída do motor direito.</figcaption></figure>
+      <figure><img src="img/fotos/bateria.jpg" alt="Célula 18650 roxa presa com fita, com o LM2596 embaixo e fios em volta" loading="lazy">
+        <figcaption><b>A bateria</b>18650 presa com fita, LM2596 logo abaixo e o emaranhado de fios em volta.</figcaption></figure>
+      <figure><img src="img/fotos/bancada.jpg" alt="Peças na bancada: Arduino, motores N20, duas células 18650 e a base impressa com os ultrassons" loading="lazy">
+        <figcaption><b>Tudo aberto</b>Arduino, motores N20, as duas 18650 e a base com os ultrassons já montados.</figcaption></figure>
+      <figure><img src="img/fotos/laboratorio.jpg" alt="Laboratório da faculdade com o robô ligado no notebook e o rolo de solda na mesa" loading="lazy">
+        <figcaption><b>No laboratório</b>Onde o robô passou o mês: ligado no notebook, rolo de solda ao lado e mais uma rodada de testes.</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="equipe">
+    <div class="cabeca">
+      <p class="eyebrow">InovaWeek · UVV · Vila Velha (ES)</p>
+      <h2>Quem fez, e em quanto tempo</h2>
+      <p>Projeto do 2º período de Engenharia de Software, com praticamente um mês para sair do
+        zero até o robô lutando.</p>
+    </div>
+
+    <div class="corpo">
+      <p><b>O que é o InovaWeek.</b> É a semana de inovação da UVV, a Universidade Vila Velha,
+        no Espírito Santo. Ao longo do período cada turma desenvolve um projeto prático e, na
+        semana do evento, tudo é apresentado e disputado. O <b>Sumô Tech Fight</b> é a competição
+        de robôs do InovaWeek: dois robôs autônomos no dojô, cada um tentando empurrar o outro
+        para fora. Nesta edição são <b>70 equipes</b>.</p>
+
+      <p><b>A equipe.</b> Gabriel Fernandes, Gustavo Fernandes, Rafaela Ribeiro, Edvaldo Neto e
+        Ana Lívia, do 2º período de Engenharia de Software, com a orientação do
+        <b>professor Abrantes</b>, que tirou as dúvidas no laboratório.</p>
+
+      <p><b>O ritmo.</b> Um mês — e não foi um mês tranquilo. Teve dia de entrar às 8 da manhã e
+        sair às 23h, abrindo e fechando a faculdade. Teve semana com <b>cinco dias
+        seguidos nesse ritmo</b>. A gente perdeu aula do curso para ficar no laboratório soldando,
+        moldando o robô e tirando dúvida com o professor. O ciclo era sempre o mesmo: soldar,
+        testar, quebrar, consertar e testar de novo.</p>
+    </div>
+
+    <dl class="ficha" style="margin-top:26px">
+      <div><dt>Evento</dt><dd>InovaWeek 2026 <small>UVV, Vila Velha</small></dd></div>
+      <div><dt>Competição</dt><dd>Sumô Tech Fight <small>mini sumô</small></dd></div>
+      <div><dt>Equipes</dt><dd class="num">70</dd></div>
+      <div><dt>Turma</dt><dd>Eng. de Software <small>2º período</small></dd></div>
+      <div><dt>Integrantes</dt><dd class="num">5 <small>+ prof. Abrantes</small></dd></div>
+      <div><dt>Tempo de projeto</dt><dd>~1 mês</dd></div>
+      <div><dt>Dias longos</dt><dd class="num">8h → 23h</dd></div>
+    </dl>
+  </section>
+
+  <section id="tempo">
+    <div class="cabeca">
+      <p class="eyebrow">Atas</p>
+      <h2>Linha do tempo</h2>
+      <p>O que aconteceu em cada dia de trabalho.</p>
+    </div>
+
+    <div class="ata">
+      <div class="quando"><b>11–12 set</b>nasce o Atom</div>
+      <div>
+        <h3>O modelo 3D ganhou os furos dos sensores</h3>
+        <p>O projeto tinha duas partes que não conversavam: a carcaça de fora não tinha os furos
+          dos HC-SR04 que a segunda parte pedia. O primeiro desenho corrigiu isso, o segundo tentou
+          uma caixa alta com a eletrônica dentro (ficou alta demais) e o terceiro — o Atom — voltou
+          ao corpo baixo, com 95 × 95 mm.</p>
+      </div>
+    </div>
+
+    <div class="ata">
+      <div class="quando"><b>15 set</b>Regras + mapas</div>
+      <div>
+        <h3>O regulamento virou lista de requisitos</h3>
+        <p>O PDF das regras de 2026 foi lido inteiro e transformado em checklist: tamanho, massa,
+          receptor infravermelho obrigatório, os códigos A/B/C do controle do juiz e o fluxo
+          Início → Ready → Start → Stop. Também saíram os mapas da base e da tampa, com o número
+          de cada peça, para montar sem errar.</p>
+      </div>
+    </div>
+
+    <div class="ata">
+      <div class="quando"><b>16 set</b>IDE e 1ª compilação</div>
+      <div>
+        <h3>Ambiente pronto</h3>
+        <p>Arduino IDE 2.3.10, pacote AVR e a biblioteca IRremote 4.7.1 instalados. O código
+          nasceu já escrito em cima das regras: nada se move antes do Start, o Stop é definitivo
+          e o robô nunca fica parado.</p>
+      </div>
+    </div>
+
+    <div class="ata">
+      <div class="quando"><b>19 set</b>Primeira gravação</div>
+      <div>
+        <h3>O robô liga, mas não obedece o controle</h3>
+        <p>A gravação só funcionou depois de descobrir que o Nano usa o bootloader novo.
+          Aí veio o problema maior: apertar o B não fazia nada. O diagnóstico mostrou quadros
+          infravermelhos desconhecidos e depois um zumbido de 60 Hz — sinal de pino solto.</p>
+      </div>
+    </div>
+
+    <div class="ata">
+      <div class="quando"><b>21 set</b>Fiação real</div>
+      <div>
+        <h3>Um programa só para descobrir onde cada fio está</h3>
+        <p>O <code>descobrir_pinos</code> varreu os pinos contando bordas e disparando os
+          ultrassons até achar cada par TRIG/ECHO. A fiação do robô era diferente da planejada:
+          o receptor estava no D12, e não no D2. Todos os pinos do código foram remapeados.</p>
+      </div>
+    </div>
+
+    <div class="ata">
+      <div class="quando"><b>22 set</b>Dia das táticas</div>
+      <div>
+        <h3>Ataque reto, borda, backups</h3>
+        <p>O dia inteiro ajustando o comportamento na arena: ataque em linha reta com as duas
+          rodas na mesma potência, prioridade da borda branca, prioridade para o inimigo mais
+          perto (testada e desfeita) e, no fim, o ataque travado. Cada versão virou um backup
+          antes da seguinte.</p>
+        <p>No mesmo dia, véspera da qualificação, o robô ganhou tração: dez borrachinhas na
+          calota de cada roda, com o pneu por cima. Foi o que tirou a barriga do chassi do chão
+          e fez o pneu parar de patinar.</p>
+      </div>
+    </div>
+
+    <div class="ata">
+      <div class="quando"><b>23 set</b>dia da qualificação</div>
+      <div>
+        <h3>Hoje é o dia</h3>
+        <p>O Atom vai para a qualificação com o backup 2 gravado, as borrachinhas nas rodas e
+          os remendos todos no lugar.</p>
+        <p>De manhã ainda deu tempo de adaptar o código para o segundo robô, o de sucata, que
+          tem outra fiação: ultrassons nos pinos analógicos, ponte H com ré e sem sensor de
+          linha. A gravação dele esbarrou numa placa que não reinicia sozinha.</p>
+        <p><i>O resultado da quali entra aqui depois.</i></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="modelo">
+    <div class="cabeca">
+      <p class="eyebrow">Impressão 3D</p>
+      <h2>O modelo, revisão por revisão</h2>
+      <p>Três revisões até a peça fazer sentido para montar de verdade.</p>
+    </div>
+
+    <div class="corpo">
+      <h3>Desenho 1 — os furos dos sensores</h3>
+      <p>A primeira montagem não encaixava: a carcaça externa não tinha os furos dos HC-SR04.
+        O primeiro desenho abriu os furos dos transdutores e um alívio lateral para a placa entrar. Só que o
+        alívio era curto demais: a placa travava antes de os transdutores chegarem aos furos.</p>
+
+      <h3>Desenho 2 — alta demais</h3>
+      <p>O segundo desenho fechou a eletrônica numa caixa alta. Funcionava no desenho, mas o robô ficou alto
+        sem necessidade e mais fácil de ser virado. Foi descartada.</p>
+
+      <h3>Atom — o que foi impresso</h3>
+      <p>Corpo baixo de novo, alívio lateral de Y 21,4 a Y 36,1 cobrindo os 12 mm de curso da
+        placa, pilares de Ø9 mm fora do caminho dos transdutores e os afastadores dos sensores
+        fundidos na parede lateral e na nervura central, para poder imprimir sem suporte.</p>
+    </div>
+
+    <div class="tabela" style="margin-top:22px">
+      <table>
+        <thead><tr><th>Medida</th><th>Valor</th></tr></thead>
+        <tbody>
+          <tr><td class="txt">Largura × comprimento</td><td class="num">95 × 95 mm</td></tr>
+          <tr><td class="txt">Base impressa</td><td class="num">95 × 95 × 34 mm</td></tr>
+          <tr><td class="txt">Tampa impressa</td><td class="num">95 × 85 × 11,3 mm</td></tr>
+          <tr><td class="txt">Corpo fechado</td><td class="num">45,3 mm</td></tr>
+          <tr><td class="txt">Plástico</td><td class="num">92,9 cm³ · até 115 g em PLA</td></tr>
+          <tr><td class="txt">Malha (base e tampa)</td><td class="num">1 corpo · 0 aresta não-manifold · 0 triângulo degenerado</td></tr>
+          <tr><td class="txt">Base × tampa montadas</td><td class="num">só encostam: interseção de volume zero</td></tr>
+          <tr><td class="txt">Retirada lateral das rodas</td><td class="num">livre</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Vistas e mapas</h3>
+    <div class="galeria">
+      <figure><img src="img/vista_montada_r5.png" alt="Robô montado: base laranja, tampa cinza e os módulos em cima" loading="lazy">
+        <figcaption><b>Montado</b>Base (laranja) com a tampa por cima. Em cima dela: L298N em vermelho, LM2596 em azul e o Nano em preto.</figcaption></figure>
+      <figure><img src="img/vista_frente_r5.png" alt="Vista de frente do robô com os quatro furos dos transdutores" loading="lazy">
+        <figcaption><b>De frente</b>A rampa e os quatro furos: dois transdutores para cada HC-SR04.</figcaption></figure>
+      <figure><img src="img/vista_explodida_r5.png" alt="Vista explodida das peças" loading="lazy">
+        <figcaption><b>Explodida</b>As peças separadas, na ordem em que entram na montagem.</figcaption></figure>
+      <figure><img src="img/vista_base_interna_r5.png" alt="Interior da base com motores, rodas e bateria" loading="lazy">
+        <figcaption><b>Base por dentro</b>Motores, rodas, bateria e sensores, todos dentro da base.</figcaption></figure>
+      <figure><img src="img/mapa_base_r5.png" alt="Mapa numerado da base" loading="lazy">
+        <figcaption><b>Mapa da base</b>1 = HC-SR04, 2 = TCRT5000, 3 = bateria, 4 = motores, 5 = rodas, 6 = apoio traseiro, 7 = parafusos.</figcaption></figure>
+      <figure><img src="img/mapa_tampa_r5.png" alt="Mapa numerado da tampa" loading="lazy">
+        <figcaption><b>Mapa da tampa</b>Onde cada módulo é parafusado em cima da tampa.</figcaption></figure>
+      <figure><img src="img/vista_impressao_r5.png" alt="As duas peças deitadas na mesa de impressão" loading="lazy">
+        <figcaption><b>Na impressora</b>As duas peças deitadas na mesa, do jeito que foram impressas.</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="eletronica">
+    <div class="cabeca">
+      <p class="eyebrow">Fiação encontrada no robô</p>
+      <h2>Eletrônica</h2>
+      <p>Esses números não foram escolhidos: foram descobertos com o programa
+        <code>descobrir_pinos</code>, porque a fiação pronta era diferente da planejada.</p>
+    </div>
+
+    <div class="tabela">
+      <table>
+        <thead><tr><th>Peça</th><th>Pino do componente</th><th>No Arduino</th></tr></thead>
+        <tbody>
+          <tr><td class="txt">Receptor infravermelho</td><td>S / OUT</td><td>D12</td></tr>
+          <tr><td class="txt">TCRT5000 esquerdo / direito</td><td>DO</td><td>A1 / A0</td></tr>
+          <tr><td class="txt">HC-SR04 esquerdo</td><td>TRIG / ECHO</td><td>D10 / D9</td></tr>
+          <tr><td class="txt">HC-SR04 direito</td><td>TRIG / ECHO</td><td>D8 / D11</td></tr>
+          <tr><td class="txt">L298N, motor esquerdo</td><td>IN1 / IN2</td><td>D2 / sem fio</td></tr>
+          <tr><td class="txt">L298N, motor direito</td><td>IN3 / IN4</td><td>D6 / sem fio</td></tr>
+          <tr><td class="txt">L298N</td><td>ENA / ENB</td><td>jumper (força máxima)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="nota" style="margin-top:18px">
+      <b>Duas consequências dessa fiação.</b> Como o IN2 e o IN4 não têm fio, o robô não dá ré:
+      ele foge da borda girando com uma roda só, e por isso os tempos de giro são o dobro.
+      E como cada motor tem um fio só, não dá para inverter o sentido pelo código — quando as
+      rodas saíram girando para trás, a correção foi trocar os fios no L298N.
+    </div>
+  </section>
+
+  <section id="codigo">
+    <div class="cabeca">
+      <p class="eyebrow">Backup 2 · gravado em 22/09</p>
+      <h2>O código que está no robô</h2>
+      <p>Uma decisão de cada vez, sempre na mesma ordem de prioridade.</p>
+    </div>
+
+    <div class="figura" role="img" aria-label="Fluxo de decisão do robô: primeiro a borda branca, depois o inimigo, depois a busca.">
+      <svg viewBox="0 0 880 250" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace">
+        <defs>
+          <marker id="pt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0 0 L10 5 L0 10 z" fill="var(--line2)"/>
+          </marker>
+        </defs>
+        <g font-size="12">
+          <rect x="8" y="96" width="132" height="58" rx="6" fill="var(--surface2)" stroke="var(--line2)"/>
+          <text x="74" y="120" text-anchor="middle" fill="var(--ink2)" font-size="10.5">LER SENSORES</text>
+          <text x="74" y="138" text-anchor="middle" fill="var(--ink)">linha + ultrassom</text>
+
+          <path d="M140 125 H186" stroke="var(--line2)" fill="none" marker-end="url(#pt)"/>
+
+          <rect x="190" y="86" width="150" height="78" rx="6" fill="var(--bad-soft)" stroke="var(--bad)"/>
+          <text x="265" y="110" text-anchor="middle" fill="var(--bad)" font-size="10.5">PRIORIDADE 1</text>
+          <text x="265" y="130" text-anchor="middle" fill="var(--ink)">viu branco?</text>
+          <text x="265" y="150" text-anchor="middle" fill="var(--ink2)" font-size="11">foge da borda</text>
+
+          <path d="M265 86 V56 H600 V86" stroke="var(--bad)" fill="none" marker-end="url(#pt)" stroke-dasharray="4 3"/>
+          <text x="432" y="48" text-anchor="middle" fill="var(--bad)" font-size="10.5">sim — nada segura o robô na borda</text>
+
+          <path d="M340 125 H386" stroke="var(--line2)" fill="none" marker-end="url(#pt)"/>
+          <text x="363" y="116" text-anchor="middle" fill="var(--ink2)" font-size="10">não</text>
+
+          <rect x="390" y="86" width="150" height="78" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+          <text x="465" y="110" text-anchor="middle" fill="var(--accent-ink)" font-size="10.5">PRIORIDADE 2</text>
+          <text x="465" y="130" text-anchor="middle" fill="var(--ink)">viu o inimigo?</text>
+          <text x="465" y="150" text-anchor="middle" fill="var(--ink2)" font-size="11">ataca reto</text>
+
+          <path d="M540 125 H586" stroke="var(--line2)" fill="none" marker-end="url(#pt)"/>
+          <text x="563" y="116" text-anchor="middle" fill="var(--ink2)" font-size="10">não</text>
+
+          <rect x="590" y="86" width="150" height="78" rx="6" fill="var(--data-soft)" stroke="var(--data)"/>
+          <text x="665" y="110" text-anchor="middle" fill="var(--data)" font-size="10.5">PRIORIDADE 3</text>
+          <text x="665" y="130" text-anchor="middle" fill="var(--ink)">procura</text>
+          <text x="665" y="150" text-anchor="middle" fill="var(--ink2)" font-size="11">gira ¾ e anda 10 cm</text>
+
+          <path d="M740 125 H800 V196 H74 V158" stroke="var(--line2)" fill="none" marker-end="url(#pt)"/>
+          <text x="437" y="212" text-anchor="middle" fill="var(--ink2)" font-size="10.5">o ciclo repete umas 60 vezes por segundo</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="corpo">
+      <h3>As três regras da luta</h3>
+      <ol class="lista">
+        <li><b>Borda branca é prioridade.</b> Enquanto um sensor de linha vê branco, nada faz o robô
+          andar para a frente — nem o inimigo. Ele só volta a atacar depois de sair do branco e de
+          girar pelo menos metade da fuga. A única exceção é o empurrão final: se estiver com o
+          inimigo colado, empurra mais 3,5 cm antes de fugir, porque quem conduz o oponente para
+          fora ganha o ponto mesmo encostando fora primeiro (Art. 37).</li>
+        <li><b>Inimigo à vista, ataque reto.</b> Qualquer um dos dois ultrassons vendo algo até
+          60 cm: as duas rodas para a frente, na mesma potência, sem curva e sem mira.
+          <b>Ataque travado:</b> colado no inimigo o HC-SR04 não consegue medir (ele não lê a menos
+          de 2 cm), então o robô continua empurrando reto por até 3 s sem leitura nenhuma.</li>
+        <li><b>Nada à vista, procura.</b> Gira ¾ de volta para o lado onde viu o inimigo por último
+          e anda 10 cm para a frente, para procurar de outro ponto. Assim ele nunca fica parado
+          (Art. 42) e está sempre buscando o oponente (Art. 43).</li>
+      </ol>
+
+      <h3>Números que dá para mexer</h3>
+    </div>
+
+    <div class="tabela">
+      <table>
+        <thead><tr><th>Constante</th><th>Valor</th><th>Para que serve</th></tr></thead>
+        <tbody>
+          <tr><td>ALCANCE_CM</td><td class="num">60</td><td class="txt">Até onde considera que viu o oponente</td></tr>
+          <tr><td>DIST_EMPURRAR_CM</td><td class="num">15</td><td class="txt">Visto a essa distância, conta como encostado</td></tr>
+          <tr><td>T_MEMORIA_COLADO_MS</td><td class="num">3000</td><td class="txt">Quanto tempo empurra sem leitura nenhuma</td></tr>
+          <tr><td>T_MEMORIA_ATAQUE_MS</td><td class="num">500</td><td class="txt">O mesmo, quando o inimigo foi visto longe</td></tr>
+          <tr><td>VEL_ATAQUE</td><td class="num">255</td><td class="txt">Potência das duas rodas no ataque</td></tr>
+          <tr><td>BUSCA_GIRO_GRAUS</td><td class="num">270</td><td class="txt">Quanto gira a cada ciclo de busca</td></tr>
+          <tr><td>T_BRANCO_FIRME_MS</td><td class="num">20</td><td class="txt">Tempo de branco seguido para valer como borda</td></tr>
+          <tr><td>T_LINHA_TRAVADA_MS</td><td class="num">3000</td><td class="txt">Branco demais = sensor desregulado, ignorado</td></tr>
+          <tr><td>FATOR_VELOCIDADE</td><td class="num">0,80</td><td class="txt">Velocidade real ÷ nominal (falta calibrar)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>O controle do juiz</h3>
+    <div class="tabela">
+      <table>
+        <thead><tr><th>Tecla</th><th>Código</th><th>O robô</th><th>LED</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>0x0C</td><td class="txt">Ready: parado, esperando</td><td class="txt">pisca devagar</td></tr>
+          <tr><td>B</td><td>0x18</td><td class="txt">Start: luta</td><td class="txt">pisca rápido</td></tr>
+          <tr><td>C</td><td>0x5E</td><td class="txt">Stop: encerra de vez</td><td class="txt">aceso fixo</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details class="codigo" style="margin-top:24px" open>
+      <summary>mini_sumo_uvv.ino — o código completo<span>backup 2 · 841 linhas · clique para recolher</span></summary>
+      <div class="barra-codigo">
+        <span>Arduino Nano · ATmega328P · biblioteca IRremote 4.x</span>
+        <button class="bt" id="bt-copiar">Copiar código</button>
+      </div>
+      <pre><code id="codigo"><span class="c">/*
+  Mini Sumo 95 - firmware para o Sumo Tech Fight (InovaWeek 2026, UVV)
+  Versao para motores N20 de 200 RPM.
+
+  Placa: Arduino Nano (ATmega328P, 5 V)
+  Biblioteca obrigatoria: IRremote (shirriff, z3t0, ArminJo), versao 4.x
+
+  Estrategia: procurar o inimigo e, quando achar, ir RETO para cima dele.
+    1. Borda branca a vista -&gt; foge da borda. PRIORIDADE ABSOLUTA: enquanto
+       um sensor de linha ve branco, nada faz o robo andar para a frente,
+       nem o inimigo. So volta a atacar depois de sair do branco e de girar
+       pelo menos metade da fuga.
+       Excecao: se estiver empurrando o inimigo colado, da um empurrao final
+       antes de fugir (Art. 37: quem conduz o oponente para fora ganha o
+       ponto, mesmo encostando fora primeiro).
+    2. INIMIGO A VISTA (em qualquer um dos dois sensores) -&gt; ATACAR: as duas
+       rodas para a frente com a MESMA potencia (VEL_ATAQUE). Sem curva e sem
+       mira: anda reto e empurra. ATAQUE TRAVADO: colado no inimigo o HC-SR04
+       nao le, entao o robo continua empurrando reto, sem parar, por ate 3 s
+       sem leitura. Se o inimigo foi visto longe, espera so meio segundo.
+    3. Nada a vista -&gt; BUSCA: gira 3/4 de volta para o lado onde viu o
+       inimigo por ultimo e anda 10 cm para a frente, procurando de novo.
+  Sensor de linha desregulado (travado em BRANCO ou piscando entre branco e
+  preto) e ignorado ate ler preto firme, para o robo nao ficar girando para
+  sempre fugindo de uma borda que nao existe.
+
+  Com motor de 200 RPM o robo e lento, entao os tempos das manobras nao sao
+  fixos: saem da velocidade do motor, do diametro da roda e da distancia entre
+  as rodas. Ajuste FATOR_VELOCIDADE com o teste TESTE_GIRO_360 (ver README).
+
+  Regras atendidas:
+    Art. 18/33  Receptor IR 38 kHz e controle RoboCore ........ processarControle()
+    Anexo A.2   A=0x0C (Ready), B=0x18 (Start), C=0x5E (Stop) .. TECLA_*
+    Figura 6    Inicio -A-&gt; Ready -B-&gt; Start -A-&gt; Ready (pausa)
+                qualquer estado -C-&gt; Stop -&gt; fim ................ processarControle()
+    Art. 33     Stop so sai desligando e ligando o robo ........ encerrar()
+    Art. 41     Nada se move antes do Start .................... setup(), manterParado()
+    Art. 42/43  Nunca fica parado e sempre busca o oponente .... lutar()
+
+  Ligacoes: todas no bloco PINOS, logo abaixo. Confira com a fiacao do robo
+  antes de gravar; o programa <span class="s">"descobrir_pinos"</span> mostra onde esta cada sensor.
+  Motor ESQUERDO no OUT1/OUT2 do L298N e DIREITO no OUT3/OUT4. Com o jumper no
+  ENA e no ENB, deixe MOTOR_COM_PWM = false.
+
+  Diagnostico: em Inicio e Ready, o Monitor Serial (115200) mostra os sensores
+  e cada sinal do controle recebido, e o LED <span class="s">"L"</span> pisca a cada sinal.
+*/</span>
+
+#define DECODE_NEC               <span class="c">// o controle RoboCore usa protocolo NEC</span>
+#include &lt;IRremote.hpp&gt;
+
+<span class="c">// ================================================================ PINOS</span>
+<span class="c">// CONFIRA COM A FIACAO DO SEU ROBO. Se nao souber em que pino esta cada fio,</span>
+<span class="c">// grave o programa <span class="s">"descobrir_pinos"</span> (pasta codigo/descobrir_pinos), abra o</span>
+<span class="c">// Monitor Serial a 115200 e siga o README. Depois troque os numeros aqui.</span>
+<span class="c">// Esquerda e direita sao do ponto de vista do robo, olhando por tras.</span>
+<span class="c">// Ao ligar, o robo avisa no Monitor Serial se algum pino foi usado 2 vezes.</span>
+<span class="c">//</span>
+<span class="c">// Pinos abaixo descobertos no robo com o programa descobrir_pinos (a fiacao</span>
+<span class="c">// do robo e diferente da planejada no inicio).</span>
+const uint8_t SEM_PINO       = 255;  <span class="c">// fio nao ligado no Arduino</span>
+const uint8_t PINO_IR        = 12;   <span class="c">// receptor do controle: pino S (ou OUT)</span>
+const uint8_t PINO_LINHA_ESQ = A1;   <span class="c">// TCRT5000 esquerdo: pino DO</span>
+const uint8_t PINO_LINHA_DIR = A0;   <span class="c">// TCRT5000 direito: pino DO</span>
+const uint8_t PINO_TRIG_ESQ  = 10;   <span class="c">// HC-SR04 esquerdo</span>
+const uint8_t PINO_ECHO_ESQ  = 9;
+const uint8_t PINO_TRIG_DIR  = 8;    <span class="c">// HC-SR04 direito</span>
+const uint8_t PINO_ECHO_DIR  = 11;
+const uint8_t PINO_IN1       = 2;         <span class="c">// motor esquerdo, para a frente</span>
+const uint8_t PINO_IN2       = SEM_PINO;  <span class="c">// motor esquerdo, para tras (sem fio)</span>
+const uint8_t PINO_IN3       = 6;         <span class="c">// motor direito, para a frente</span>
+const uint8_t PINO_IN4       = SEM_PINO;  <span class="c">// motor direito, para tras (sem fio)</span>
+const uint8_t PINO_ENA       = 5;    <span class="c">// so usados se MOTOR_COM_PWM = true</span>
+const uint8_t PINO_ENB       = 3;
+const uint8_t PINO_LED       = LED_BUILTIN;
+<span class="c">// Pinos sem sensor: ficam em 0 V para nenhuma entrada do L298N ficar solta.</span>
+<span class="c">// (Os que estiverem em uso acima sao pulados automaticamente.)</span>
+const uint8_t PINOS_EM_ZERO[] = { 3, 4, 5, 7 };
+<span class="c">// Com IN2 e IN4 sem fio o robo nao da re: foge da borda so girando.</span>
+const bool TEM_RE = PINO_IN2 != SEM_PINO &amp;&amp; PINO_IN4 != SEM_PINO;
+
+<span class="c">// ------------------------------------------- controle do juiz (Anexo A.2)</span>
+const uint16_t TECLA_READY = 0x0C;   <span class="c">// tecla A</span>
+const uint16_t TECLA_START = 0x18;   <span class="c">// tecla B</span>
+const uint16_t TECLA_STOP  = 0x5E;   <span class="c">// tecla C</span>
+
+<span class="c">// Controle de TREINO. O controle de 21 teclas de kit Arduino (<span class="s">"Car MP3"</span>) ja</span>
+<span class="c">// funciona sem mudar nada: as teclas 1, 2 e 3 dele mandam os mesmos codigos</span>
+<span class="c">// de A, B e C. O de 17 teclas (com setas) nao tem esses codigos; com true,</span>
+<span class="c">// as teclas 1, 2 e 3 dele passam a valer como A, B e C.</span>
+<span class="c">// NA COMPETICAO deixe false: so o controle do juiz deve comandar o robo.</span>
+const bool     ACEITAR_CONTROLE_KIT = false;
+const uint16_t KIT_READY = 0x45;     <span class="c">// tecla 1 do controle de 17 teclas</span>
+const uint16_t KIT_START = 0x46;     <span class="c">// tecla 2</span>
+const uint16_t KIT_STOP  = 0x47;     <span class="c">// tecla 3</span>
+
+<span class="c">// ------------------------------------------------ motor e rodas (200 RPM)</span>
+const float RPM_MOTOR        = 200.0;  <span class="c">// rotacao nominal do motor</span>
+const float DIAMETRO_RODA_MM = 22.0;
+const float BITOLA_MM        = 75.5;   <span class="c">// distancia entre o meio das duas rodas</span>
+<span class="c">// Velocidade real dividida pela nominal. O L298N perde uns 2 V e o robo tem</span>
+<span class="c">// peso e atrito. Calibre com TESTE_GIRO_360. Motor de 12 V ligado em bateria</span>
+<span class="c">// de 7,4 V fica perto de 0.40.</span>
+const float FATOR_VELOCIDADE = 0.80;
+
+<span class="c">// Se um motor girar ao contrario, troque para true (ou inverta os fios).</span>
+const bool INVERTE_MOTOR_ESQ = false;
+const bool INVERTE_MOTOR_DIR = false;
+
+<span class="c">// ENA e ENB do L298N ligados no Nano (D5 e D6): true.</span>
+<span class="c">// Com o jumper no ENA e no ENB (motor sempre na forca maxima): false. Nesse</span>
+<span class="c">// caso a velocidade parcial e feita ligando e desligando os pinos IN em ciclos</span>
+<span class="c">// de PERIODO_PWM_SW_MS: 170 de 255, por exemplo, fica 2/3 do ciclo ligado.</span>
+const bool MOTOR_COM_PWM = false;
+const unsigned long PERIODO_PWM_SW_MS = 40;
+
+<span class="c">// Nivel do pino DO do TCRT5000 sobre a borda BRANCA (quase sempre LOW).</span>
+const int NIVEL_BRANCO = LOW;
+
+<span class="c">// ------------------------------------------------------ sensores de alvo</span>
+const unsigned int  ALCANCE_CM        = 60;    <span class="c">// o dojo tem 77 cm de diametro</span>
+const unsigned int  DIST_EMPURRAR_CM  = 15;    <span class="c">// perto assim conta como encostado (ataque travado)</span>
+const unsigned long ESPERA_ECO_US     = 6000;  <span class="c">// tempo maximo ate o eco COMECAR</span>
+const unsigned long INTERVALO_PING_MS = 15;    <span class="c">// um sensor por vez: cada um a cada 30 ms</span>
+const unsigned long VALIDADE_MS       = 250;   <span class="c">// sem medida nova ha mais tempo: sem alvo</span>
+const uint8_t       CONFIRMACOES      = 2;     <span class="c">// leituras seguidas para aceitar alvo novo</span>
+
+<span class="c">// ---------------------------------------------------------- velocidades</span>
+<span class="c">// De 0 a 255. Motor de 200 RPM e lento: ataque e fuga sempre no maximo.</span>
+const int VEL_MAX            = 255;
+<span class="c">// ATAQUE: potencia das DUAS rodas quando o inimigo aparece. E um valor so,</span>
+<span class="c">// usado nas duas: as rodas recebem exatamente a mesma potencia e o robo vai</span>
+<span class="c">// reto. 255 = maximo (roda sempre ligada, sem pulsar).</span>
+const int VEL_ATAQUE         = 255;
+const int VEL_BUSCA_GIRO     = 170;   <span class="c">// devagar o bastante para os sensores lerem</span>
+const int VEL_BUSCA_AVANCO   = 200;
+
+<span class="c">// ------------------------------------------------------------- manobras</span>
+<span class="c">// Em milimetros e graus; o tempo e calculado a partir da velocidade do motor.</span>
+const float RE_BORDA_MM          = 60;
+const float GIRO_BORDA_GRAUS     = 135;
+const float GIRO_BORDA_180_GRAUS = 180;
+const float BUSCA_GIRO_GRAUS     = 270;   <span class="c">// gira 3/4 de volta...</span>
+const float BUSCA_AVANCO_MM      = 100;   <span class="c">// ...e avanca 10 cm, procurando em outro ponto</span>
+const float EMPURRAO_FINAL_MM    = 35;
+
+<span class="c">// Depois de perder o inimigo de vista, continua atacando reto por mais este</span>
+<span class="c">// tempo (o inimigo foi visto longe por ultimo).</span>
+const unsigned long T_MEMORIA_ATAQUE_MS    = 500;
+<span class="c">// ATAQUE TRAVADO: se o inimigo foi visto a ate DIST_EMPURRAR_CM, o robo esta</span>
+<span class="c">// encostado nele e o HC-SR04 nao consegue medir. Continua empurrando reto,</span>
+<span class="c">// sem parar, por ate este tempo sem leitura. So a borda interrompe antes.</span>
+const unsigned long T_MEMORIA_COLADO_MS    = 3000;
+const unsigned long T_CONTATO_RECENTE_MS   = 150;  <span class="c">// para valer o empurrao final</span>
+
+<span class="c">// Empurrao final na borda. Desligue (false) se o robo estiver caindo junto.</span>
+const bool USAR_EMPURRAO_FINAL = true;
+
+<span class="c">// Lado para onde comeca a procurar: +1 gira para a direita, -1 para a esquerda.</span>
+const int LADO_BUSCA_INICIAL = +1;
+
+<span class="c">// Teste de calibracao: no Start o robo da uma volta de 360 graus e para.</span>
+<span class="c">// NUNCA deixe true na competicao: robo parado perde o ponto.</span>
+const bool TESTE_GIRO_360 = false;
+
+<span class="c">// Monitor serial a 115200 para calibrar. Nunca imprime durante a luta.</span>
+const bool DEBUG_SERIAL = true;
+<span class="c">// Mostra no Monitor Serial cada mudanca de tatica durante a luta (BUSCA,</span>
+<span class="c">// ATACAR, FUGA). Imprime pouco e nao atrapalha a luta.</span>
+const bool DEBUG_LUTA = true;
+
+<span class="c">// Filtro dos sensores de linha. Um sensor desregulado fica travado em BRANCO</span>
+<span class="c">// ou piscando entre branco e preto, e o robo gira sem parar fugindo de uma</span>
+<span class="c">// borda que nao existe.</span>
+<span class="c">//   BRANCO so vale depois de T_BRANCO_FIRME_MS seguidos: tira o ruido. Nesse</span>
+<span class="c">//     tempo o robo anda menos de 4 mm, e a borda tem 25 mm.</span>
+<span class="c">//   PRETO so vale como <span class="s">"saiu do branco"</span> depois de T_PRETO_FIRME_MS seguidos:</span>
+<span class="c">//     piscadas curtas de preto nao contam.</span>
+<span class="c">//   BRANCO por mais de T_LINHA_TRAVADA_MS, contando as piscadas = sensor</span>
+<span class="c">//     travado ou desregulado: ignorado ate ler preto firme. Fugindo da borda</span>
+<span class="c">//     de verdade, o sensor volta ao preto em menos de 1 s.</span>
+const unsigned long T_BRANCO_FIRME_MS  = 20;
+const unsigned long T_PRETO_FIRME_MS   = 300;
+const unsigned long T_LINHA_TRAVADA_MS = 3000;
+
+<span class="c">// ------------------------------------------------------------- estados</span>
+enum Estado : uint8_t { INICIO, READY, START, STOP };
+enum Tatica : uint8_t {
+  BUSCA_GIRO, BUSCA_AVANCO, ATACAR, EMPURRAO_FINAL, FUGA_RE, FUGA_GIRO
+};
+
+const unsigned int SEM_LEITURA    = 0xFFFF;   <span class="c">// nada ate ALCANCE_CM</span>
+const unsigned int SENSOR_OCUPADO = 0xFFFE;   <span class="c">// sem medida nova (sensor ocupado)</span>
+
+Estado estado = INICIO;
+Tatica tatica = BUSCA_GIRO;
+unsigned long tTatica = 0;
+unsigned long tInicioLuta = 0;
+unsigned long tUltimoAlvo = 0;
+unsigned long tUltimoPerto = 0;
+int ultimoLado = LADO_BUSCA_INICIAL;   <span class="c">// -1 esquerda, +1 direita</span>
+int ladoFuga = +1;
+unsigned long duracaoGiroFuga = 0;
+<span class="c">// Estado de cada sensor de linha (ver o filtro em bordaFiltrada()).</span>
+struct Linha {
+  bool ok;                      <span class="c">// false: sensor travado ou desregulado, ignorado</span>
+  bool branco;                  <span class="c">// ultima leitura</span>
+  unsigned long tMudou;         <span class="c">// quando a leitura mudou pela ultima vez</span>
+  bool noBranco;                <span class="c">// viu branco firme e ainda nao teve preto firme</span>
+  unsigned long tInicioBranco;
+};
+Linha linhaEsq = { true, false, 0, false, 0 };
+Linha linhaDir = { true, false, 0, false, 0 };
+bool bordaEsqMemo = false;
+bool bordaDirMemo = false;
+
+unsigned int distEsq = SEM_LEITURA;     <span class="c">// ultima distancia valida (dentro do alcance)</span>
+unsigned int distDir = SEM_LEITURA;
+unsigned int leituraEsq = SEM_LEITURA;  <span class="c">// ultima leitura, para o Monitor Serial</span>
+unsigned int leituraDir = SEM_LEITURA;
+uint8_t acertosEsq = 0;                 <span class="c">// 0 a 3: confianca de que ha alvo</span>
+uint8_t acertosDir = 0;
+unsigned long tMedidaEsq = 0;           <span class="c">// hora da ultima medida de verdade</span>
+unsigned long tMedidaDir = 0;
+bool pingEsquerdo = true;
+unsigned long tUltimoPing = 0;
+unsigned long tUltimoDebug = 0;
+unsigned long tUltimoIR = 0;           <span class="c">// para piscar o LED a cada sinal recebido</span>
+
+<span class="c">// Velocidades estimadas e tempos das manobras, calculados no setup().</span>
+float velRetaMmS = 0;
+float velGiroGrausS = 0;
+unsigned long tReBorda = 0;
+unsigned long tGiroBorda = 0;
+unsigned long tGiroBorda180 = 0;
+unsigned long tBuscaGiro = 0;
+unsigned long tBuscaAvanco = 0;
+unsigned long tEmpurraoFinal = 0;
+unsigned long tTeste360 = 0;
+
+<span class="c">// ------------------------------------------------------------ cinematica</span>
+unsigned long msReta(float mm, int pwm) {
+  return (unsigned long)(1000.0 * mm / (velRetaMmS * pwm / 255.0));
+}
+
+unsigned long msGiro(float graus, int pwm) {
+  return (unsigned long)(1000.0 * graus / (velGiroGrausS * pwm / 255.0));
+}
+
+void calcularManobras() {
+  velRetaMmS = RPM_MOTOR * PI * DIAMETRO_RODA_MM / 60.0 * FATOR_VELOCIDADE;
+  <span class="c">// Girando no lugar, cada roda anda em sentido oposto sobre a bitola.</span>
+  velGiroGrausS = (2.0 * velRetaMmS / BITOLA_MM) * 180.0 / PI;
+
+  <span class="c">// Sem re, o giro e feito com uma roda so (a outra para): gira na metade</span>
+  <span class="c">// da velocidade e leva o dobro do tempo.</span>
+  unsigned long fatorGiro = TEM_RE ? 1 : 2;
+
+  tReBorda       = msReta(RE_BORDA_MM, VEL_MAX);
+  tGiroBorda     = msGiro(GIRO_BORDA_GRAUS, VEL_MAX) * fatorGiro;
+  tGiroBorda180  = msGiro(GIRO_BORDA_180_GRAUS, VEL_MAX) * fatorGiro;
+  tBuscaGiro     = msGiro(BUSCA_GIRO_GRAUS, VEL_BUSCA_GIRO) * fatorGiro;
+  tBuscaAvanco   = msReta(BUSCA_AVANCO_MM, VEL_BUSCA_AVANCO);
+  tEmpurraoFinal = msReta(EMPURRAO_FINAL_MM, VEL_MAX);
+  tTeste360      = msGiro(360, VEL_MAX) * fatorGiro;
+}
+
+<span class="c">// ------------------------------------------------------------- motores</span>
+void escreverPino(uint8_t pino, uint8_t valor) {
+  if (pino != SEM_PINO) digitalWrite(pino, valor);
+}
+
+void acionarMotor(uint8_t pinoEn, uint8_t pinoA, uint8_t pinoB, int vel, bool inverte) {
+  vel = constrain(vel, -255, 255);
+  if (inverte) vel = -vel;
+  if (vel &lt; 0 &amp;&amp; pinoB == SEM_PINO) vel = 0;   <span class="c">// sem fio de re: so para</span>
+  if (!MOTOR_COM_PWM &amp;&amp; vel != 0 &amp;&amp; abs(vel) &lt; 255) {
+    bool ligado = millis() % PERIODO_PWM_SW_MS &lt;
+                  (unsigned long)abs(vel) * PERIODO_PWM_SW_MS / 255;
+    vel = ligado ? (vel &gt; 0 ? 255 : -255) : 0;
+  }
+  if (vel &gt; 0) {
+    escreverPino(pinoA, HIGH);
+    escreverPino(pinoB, LOW);
+  } else if (vel &lt; 0) {
+    escreverPino(pinoA, LOW);
+    escreverPino(pinoB, HIGH);
+  } else {
+    escreverPino(pinoA, LOW);
+    escreverPino(pinoB, LOW);
+  }
+  <span class="c">// Com jumper no ENA/ENB, D5 e D6 ficam livres e o codigo nao mexe neles.</span>
+  if (MOTOR_COM_PWM) analogWrite(pinoEn, abs(vel));
+}
+
+<span class="c">// Velocidades de -255 (re) a 255 (frente).</span>
+void motores(int esquerdo, int direito) {
+  acionarMotor(PINO_ENA, PINO_IN1, PINO_IN2, esquerdo, INVERTE_MOTOR_ESQ);
+  acionarMotor(PINO_ENB, PINO_IN3, PINO_IN4, direito, INVERTE_MOTOR_DIR);
+}
+
+void manterParado() {
+  motores(0, 0);
+}
+
+<span class="c">// ------------------------------------------------------------- sensores</span>
+bool bordaEsquerda() { return digitalRead(PINO_LINHA_ESQ) == NIVEL_BRANCO; }
+bool bordaDireita()  { return digitalRead(PINO_LINHA_DIR) == NIVEL_BRANCO; }
+
+<span class="c">// Diz se o sensor ve a borda, com o filtro contra sensor desregulado (ver</span>
+<span class="c">// T_BRANCO_FIRME_MS, T_PRETO_FIRME_MS e T_LINHA_TRAVADA_MS).</span>
+bool bordaFiltrada(Linha &amp;s, bool branco, unsigned long agora,
+                   const __FlashStringHelper* nome) {
+  if (branco != s.branco) {
+    s.branco = branco;
+    s.tMudou = agora;
+  }
+  unsigned long firme = agora - s.tMudou;      <span class="c">// ha quanto tempo a leitura nao muda</span>
+
+  if (!branco) {
+    if (firme &gt;= T_PRETO_FIRME_MS) {           <span class="c">// preto firme: saiu do branco</span>
+      if (!s.ok &amp;&amp; DEBUG_SERIAL &amp;&amp; DEBUG_LUTA) {
+        Serial.print(F(<span class="s">"luta: sensor de linha "</span>));
+        Serial.print(nome);
+        Serial.println(F(<span class="s">" voltou a funcionar"</span>));
+      }
+      s.ok = true;
+      s.noBranco = false;
+    }
+    return false;
+  }
+
+  if (firme &lt; T_BRANCO_FIRME_MS) return false; <span class="c">// branco rapido demais: ruido</span>
+  if (!s.noBranco) {
+    s.noBranco = true;
+    s.tInicioBranco = agora;
+  }
+  if (s.ok &amp;&amp; agora - s.tInicioBranco &gt; T_LINHA_TRAVADA_MS) {
+    s.ok = false;
+    if (DEBUG_SERIAL &amp;&amp; DEBUG_LUTA) {
+      Serial.print(F(<span class="s">"luta: sensor de linha "</span>));
+      Serial.print(nome);
+      Serial.println(F(<span class="s">" travado em BRANCO ou piscando: ignorado ate ler preto firme"</span>));
+    }
+  }
+  return s.ok;
+}
+
+<span class="c">// No Start: sensor que ja comeca BRANCO esta desregulado (o robo comeca sobre</span>
+<span class="c">// o preto) e fica ignorado ate ler preto firme.</span>
+void iniciarLinha(Linha &amp;s, bool branco, unsigned long agora) {
+  s.ok = !branco;
+  s.branco = branco;
+  s.tMudou = agora;
+  s.noBranco = false;
+}
+
+<span class="c">// Mede a distancia em cm. O tempo do eco so comeca a contar quando o ECHO sobe:</span>
+<span class="c">// o HC-SR04 leva de 0,5 a 2 ms para comecar a responder, e isso nao pode</span>
+<span class="c">// entrar no alcance. Devolve:</span>
+<span class="c">//   SEM_LEITURA     nada ate ALCANCE_CM</span>
+<span class="c">//   SENSOR_OCUPADO  o sensor ainda esta na medida anterior (sem eco, alguns</span>
+<span class="c">//                   HC-SR04 seguram o ECHO alto por ate 200 ms) ou nao disparou.</span>
+<span class="c">//                   Nao e <span class="s">"sem alvo"</span>: so nao ha medida nova.</span>
+unsigned int medirCm(uint8_t pinoTrig, uint8_t pinoEcho) {
+  if (digitalRead(pinoEcho) == HIGH) return SENSOR_OCUPADO;
+  digitalWrite(pinoTrig, LOW);
+  delayMicroseconds(2);
+  digitalWrite(pinoTrig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(pinoTrig, LOW);
+
+  unsigned long t0 = micros();
+  while (digitalRead(pinoEcho) == LOW)
+    if (micros() - t0 &gt; ESPERA_ECO_US) return SENSOR_OCUPADO;
+
+  unsigned long inicio = micros();
+  const unsigned long limite = (unsigned long)ALCANCE_CM * 58UL;
+  while (digitalRead(pinoEcho) == HIGH)
+    if (micros() - inicio &gt; limite) return SEM_LEITURA;
+  return (unsigned int)((micros() - inicio) / 58UL);
+}
+
+<span class="c">// Confianca de 0 a 3. Alvo no alcance soma 1; leitura sem alvo tira 1, em vez</span>
+<span class="c">// de zerar: uma falha isolada nao faz o robo perder o oponente de vista.</span>
+void registrarLeitura(unsigned int d, unsigned int &amp;leitura, unsigned int &amp;dist,
+                      uint8_t &amp;acertos, unsigned long &amp;tMedida) {
+  if (d == SENSOR_OCUPADO) return;       <span class="c">// sem medida nova: nada muda</span>
+  leitura = d;
+  tMedida = millis();
+  if (d &lt;= ALCANCE_CM) {
+    dist = d;
+    if (acertos &lt; 3) acertos++;
+  } else if (acertos &gt; 0) {
+    acertos--;
+  }
+}
+
+<span class="c">// Um sensor por vez, alternando, para um nao captar o eco do outro.</span>
+void atualizarUltrassom() {
+  if (millis() - tUltimoPing &lt; INTERVALO_PING_MS) return;
+  if (pingEsquerdo)
+    registrarLeitura(medirCm(PINO_TRIG_ESQ, PINO_ECHO_ESQ), leituraEsq, distEsq,
+                     acertosEsq, tMedidaEsq);
+  else
+    registrarLeitura(medirCm(PINO_TRIG_DIR, PINO_ECHO_DIR), leituraDir, distDir,
+                     acertosDir, tMedidaDir);
+  pingEsquerdo = !pingEsquerdo;
+  tUltimoPing = millis();
+}
+
+bool engajado() {
+  return tatica == ATACAR || tatica == EMPURRAO_FINAL;
+}
+
+<span class="c">// Alvo novo precisa de confianca CONFIRMACOES (filtra leitura falsa); com o</span>
+<span class="c">// alvo ja travado, 1 basta. Sensor sem medida recente nao conta.</span>
+bool vendo(uint8_t acertos, unsigned long tMedida) {
+  return acertos &gt;= (engajado() ? 1 : CONFIRMACOES) &amp;&amp;
+         millis() - tMedida &lt; VALIDADE_MS;
+}
+
+<span class="c">// --------------------------------------------------------------- estados</span>
+void imprimirTatica(Tatica t) {
+  switch (t) {
+    case BUSCA_GIRO:     Serial.println(F(<span class="s">"luta: BUSCA (girando)"</span>)); break;
+    case BUSCA_AVANCO:   Serial.println(F(<span class="s">"luta: BUSCA (avancando)"</span>)); break;
+    case ATACAR:         Serial.println(F(<span class="s">"luta: INIMIGO A VISTA -&gt; ATACAR reto, rodas iguais"</span>)); break;
+    case EMPURRAO_FINAL: Serial.println(F(<span class="s">"luta: EMPURRAO FINAL na borda"</span>)); break;
+    case FUGA_RE:        Serial.println(F(<span class="s">"luta: FUGA da borda (re)"</span>)); break;
+    case FUGA_GIRO:
+      Serial.print(F(<span class="s">"luta: FUGA da borda (girando) - branco no sensor "</span>));
+      Serial.println(bordaEsqMemo &amp;&amp; bordaDirMemo ? F(<span class="s">"dos dois lados"</span>)
+                     : bordaEsqMemo ? F(<span class="s">"esquerdo"</span>) : F(<span class="s">"direito"</span>));
+      break;
+  }
+}
+
+void iniciarTatica(Tatica t) {
+  if (t != tatica &amp;&amp; estado == START &amp;&amp; DEBUG_SERIAL &amp;&amp; DEBUG_LUTA) imprimirTatica(t);
+  tatica = t;
+  tTatica = millis();
+}
+
+void entrarReady() {
+  manterParado();
+  estado = READY;
+  iniciarTatica(BUSCA_GIRO);
+  if (DEBUG_SERIAL) Serial.println(F(<span class="s">"&gt;&gt; READY: parado, aguardando Start"</span>));
+}
+
+void entrarStart() {
+  unsigned long agora = millis();
+  estado = START;
+  tInicioLuta = agora;
+  tUltimoAlvo = agora - 60000UL;
+  tUltimoPerto = agora - 60000UL;
+  ultimoLado = LADO_BUSCA_INICIAL;
+  iniciarTatica(BUSCA_GIRO);
+  <span class="c">// No Start o robo esta no centro do dojo, sobre o preto. Sensor de linha que</span>
+  <span class="c">// ja comeca BRANCO esta desregulado: fica ignorado ate ler preto firme.</span>
+  iniciarLinha(linhaEsq, bordaEsquerda(), agora);
+  iniciarLinha(linhaDir, bordaDireita(), agora);
+  if (DEBUG_SERIAL) {
+    Serial.println(F(<span class="s">"&gt;&gt; START: luta"</span>));
+    if (!linhaEsq.ok) Serial.println(F(<span class="s">"luta: sensor de linha esquerdo BRANCO no Start: ignorado ate ler preto firme"</span>));
+    if (!linhaDir.ok) Serial.println(F(<span class="s">"luta: sensor de linha direito BRANCO no Start: ignorado ate ler preto firme"</span>));
+  }
+}
+
+<span class="c">// Stop e definitivo: para tudo e so sai desligando o robo (Art. 33).</span>
+void encerrar() {
+  manterParado();
+  estado = STOP;
+  digitalWrite(PINO_LED, HIGH);
+  if (DEBUG_SERIAL) {
+    Serial.println(F(<span class="s">"&gt;&gt; STOP: robo encerrado. Desligue e ligue para reiniciar."</span>));
+    Serial.flush();
+  }
+  noInterrupts();
+  while (true) {
+  }
+}
+
+uint16_t traduzirTecla(uint16_t comando) {
+  if (ACEITAR_CONTROLE_KIT) {
+    if (comando == KIT_READY) return TECLA_READY;
+    if (comando == KIT_START) return TECLA_START;
+    if (comando == KIT_STOP)  return TECLA_STOP;
+  }
+  return comando;
+}
+
+<span class="c">// Transicoes da Figura 6 das regras. Teclas fora do fluxograma sao ignoradas.</span>
+void processarControle() {
+  if (!IrReceiver.decode()) return;
+  tUltimoIR = millis();                  <span class="c">// qualquer sinal: o LED <span class="s">"L"</span> da uma piscada</span>
+  bool valido = IrReceiver.decodedIRData.protocol != UNKNOWN &amp;&amp;
+                !(IrReceiver.decodedIRData.flags &amp; IRDATA_FLAGS_WAS_OVERFLOW);
+  uint16_t comando = traduzirTecla(IrReceiver.decodedIRData.command);
+  <span class="c">// Diagnostico: mostra cada sinal recebido. Nunca imprime durante a luta.</span>
+  if (DEBUG_SERIAL &amp;&amp; estado != START) {
+    Serial.print(F(<span class="s">"IR: "</span>));
+    Serial.print(getProtocolString(IrReceiver.decodedIRData.protocol));
+    Serial.print(F(<span class="s">" comando 0x"</span>));
+    uint16_t original = IrReceiver.decodedIRData.command;
+    if (original &lt; 0x10) Serial.print('0');
+    Serial.print(original, HEX);
+    if (!valido)                     Serial.println(F(<span class="s">" -&gt; ignorado (controle nao e NEC ou sinal ruim)"</span>));
+    else if (comando == TECLA_READY) Serial.println(F(<span class="s">" -&gt; tecla A (Ready)"</span>));
+    else if (comando == TECLA_START) Serial.println(F(<span class="s">" -&gt; tecla B (Start)"</span>));
+    else if (comando == TECLA_STOP)  Serial.println(F(<span class="s">" -&gt; tecla C (Stop)"</span>));
+    else                             Serial.println(F(<span class="s">" -&gt; tecla sem funcao no robo"</span>));
+  }
+  IrReceiver.resume();
+  if (!valido) return;
+
+  if (comando == TECLA_STOP) {
+    encerrar();
+    return;
+  }
+  switch (estado) {
+    case INICIO:
+      if (comando == TECLA_READY) entrarReady();
+      break;
+    case READY:
+      if (comando == TECLA_START) entrarStart();
+      break;
+    case START:
+      if (comando == TECLA_READY) entrarReady();   <span class="c">// pausa do juiz</span>
+      break;
+    case STOP:
+      break;
+  }
+}
+
+<span class="c">// ----------------------------------------------------------------- luta</span>
+void comecarFuga() {
+  if (bordaEsqMemo &amp;&amp; bordaDirMemo) {
+    ladoFuga = ultimoLado;
+    duracaoGiroFuga = tGiroBorda180;
+  } else {
+    ladoFuga = bordaEsqMemo ? +1 : -1;    <span class="c">// borda a esquerda -&gt; gira para a direita</span>
+    duracaoGiroFuga = tGiroBorda;
+  }
+  <span class="c">// Sem fio de re, gira direto para longe da borda (uma roda so).</span>
+  iniciarTatica(TEM_RE ? FUGA_RE : FUGA_GIRO);
+}
+
+void lutar() {
+  unsigned long agora = millis();
+
+  if (TESTE_GIRO_360) {
+    if (agora - tInicioLuta &lt; tTeste360) motores(VEL_MAX, -VEL_MAX);
+    else manterParado();
+    return;
+  }
+
+  bool bordaE = bordaFiltrada(linhaEsq, bordaEsquerda(), agora, F(<span class="s">"esquerdo"</span>));
+  bool bordaD = bordaFiltrada(linhaDir, bordaDireita(), agora, F(<span class="s">"direito"</span>));
+
+  <span class="c">// Analisa o oponente: qual sensor ve, a que distancia e de que lado.</span>
+  atualizarUltrassom();
+  bool vE = vendo(acertosEsq, tMedidaEsq);
+  bool vD = vendo(acertosDir, tMedidaDir);
+  bool alvo = vE || vD;
+  unsigned int dE = vE ? distEsq : SEM_LEITURA;
+  unsigned int dD = vD ? distDir : SEM_LEITURA;
+  unsigned int dMin = min(dE, dD);
+  if (alvo) {
+    tUltimoAlvo = agora;
+    if (dMin &lt;= DIST_EMPURRAR_CM) tUltimoPerto = agora;
+    if (vE &amp;&amp; !vD)         ultimoLado = -1;
+    else if (vD &amp;&amp; !vE)    ultimoLado = +1;
+    else if (dE + 1 &lt; dD)  ultimoLado = -1;
+    else if (dD + 1 &lt; dE)  ultimoLado = +1;
+  }
+
+  <span class="c">// 1. Borda branca: prioridade maxima.</span>
+  bool naBorda = bordaE || bordaD;
+  if (naBorda &amp;&amp; tatica != FUGA_RE &amp;&amp; tatica != EMPURRAO_FINAL) {
+    bordaEsqMemo = bordaE;
+    bordaDirMemo = bordaD;
+    bool empurrandoAgora = USAR_EMPURRAO_FINAL &amp;&amp; tatica == ATACAR &amp;&amp;
+                           (agora - tUltimoPerto) &lt; T_CONTATO_RECENTE_MS;
+    if (empurrandoAgora) iniciarTatica(EMPURRAO_FINAL);
+    else                 comecarFuga();
+  }
+
+  if (tatica == EMPURRAO_FINAL) {
+    motores(VEL_ATAQUE, VEL_ATAQUE);       <span class="c">// mesma potencia nas duas rodas</span>
+    if (agora - tTatica &gt;= tEmpurraoFinal) comecarFuga();
+    return;
+  }
+
+  if (tatica == FUGA_RE) {
+    motores(-VEL_MAX, -VEL_MAX);
+    if (agora - tTatica &gt;= tReBorda) iniciarTatica(FUGA_GIRO);
+    return;
+  }
+
+  <span class="c">// Fugindo da borda (girando): o INIMIGO NAO INTERROMPE enquanto um sensor</span>
+  <span class="c">// ainda ve branco. So pode voltar a atacar depois de sair do branco e de</span>
+  <span class="c">// girar pelo menos metade da fuga. Enquanto ve branco, comecarFuga() e</span>
+  <span class="c">// chamada de novo a cada volta e reinicia o tempo: a contagem da metade so</span>
+  <span class="c">// comeca quando o robo sai do branco.</span>
+  if (tatica == FUGA_GIRO) {
+    bool podeAtacar = !naBorda &amp;&amp; agora - tTatica &gt;= duracaoGiroFuga / 2;
+    if (!(alvo &amp;&amp; podeAtacar)) {
+      motores(ladoFuga * VEL_MAX, -ladoFuga * VEL_MAX);
+      if (agora - tTatica &gt;= duracaoGiroFuga) {
+        ultimoLado = ladoFuga;
+        iniciarTatica(BUSCA_GIRO);
+      }
+      return;
+    }
+  }
+
+  <span class="c">// 2. ATAQUE. Viu o inimigo em qualquer um dos dois sensores: anda RETO para</span>
+  <span class="c">//    a frente e empurra, com as DUAS RODAS NA MESMA POTENCIA (VEL_ATAQUE).</span>
+  <span class="c">//    Nao faz curva nem mira. ATAQUE TRAVADO: perder a leitura nao para o</span>
+  <span class="c">//    empurrao. Colado no inimigo (visto a ate DIST_EMPURRAR_CM) o sensor nao</span>
+  <span class="c">//    mede, entao continua empurrando reto por ate T_MEMORIA_COLADO_MS; se o</span>
+  <span class="c">//    inimigo foi visto longe, por T_MEMORIA_ATAQUE_MS. So depois procura.</span>
+  if (alvo) {
+    if (tatica != ATACAR) iniciarTatica(ATACAR);
+  } else if (tatica == ATACAR &amp;&amp;
+             agora - tUltimoAlvo &gt;= T_MEMORIA_ATAQUE_MS &amp;&amp;
+             agora - tUltimoPerto &gt;= T_MEMORIA_COLADO_MS) {
+    iniciarTatica(BUSCA_GIRO);             <span class="c">// tempo demais sem ver: procura de novo</span>
+  }
+
+  switch (tatica) {
+    case ATACAR:
+      motores(VEL_ATAQUE, VEL_ATAQUE);     <span class="c">// reto: mesma potencia nas duas rodas</span>
+      break;
+
+    <span class="c">// 3. Procura: gira 3/4 de volta para o ultimo lado e avanca um pouco.</span>
+    case BUSCA_GIRO:
+      <span class="c">// Algo apareceu num sensor mas ainda nao foi confirmado: segura o giro</span>
+      <span class="c">// por um instante para a segunda leitura pegar o mesmo ponto.</span>
+      if ((acertosEsq || acertosDir) &amp;&amp; millis() - max(tMedidaEsq, tMedidaDir) &lt; VALIDADE_MS) {
+        manterParado();
+        break;
+      }
+      motores(ultimoLado * VEL_BUSCA_GIRO, -ultimoLado * VEL_BUSCA_GIRO);
+      if (agora - tTatica &gt;= tBuscaGiro) iniciarTatica(BUSCA_AVANCO);
+      break;
+
+    case BUSCA_AVANCO:
+      motores(VEL_BUSCA_AVANCO, VEL_BUSCA_AVANCO);
+      if (agora - tTatica &gt;= tBuscaAvanco) iniciarTatica(BUSCA_GIRO);
+      break;
+
+    default:
+      break;
+  }
+}
+
+<span class="c">// ------------------------------------------------------------- calibracao</span>
+void imprimirDistancia(unsigned int d) {
+  if (d == SEM_LEITURA) Serial.print(F(<span class="s">"--"</span>));
+  else Serial.print(d);
+}
+
+void imprimirSensores() {
+  unsigned long agora = millis();
+  if (agora - tUltimoDebug &lt; 200) return;
+  tUltimoDebug = agora;
+  bool vE = vendo(acertosEsq, tMedidaEsq);
+  bool vD = vendo(acertosDir, tMedidaDir);
+  Serial.print(estado == INICIO ? F(<span class="s">"[INICIO] "</span>) : F(<span class="s">"[READY]  "</span>));
+  Serial.print(F(<span class="s">"US esq="</span>));
+  imprimirDistancia(leituraEsq);
+  Serial.print(F(<span class="s">"cm dir="</span>));
+  imprimirDistancia(leituraDir);
+  Serial.print(F(<span class="s">"cm  alvo="</span>));
+  Serial.print(vE &amp;&amp; vD ? F(<span class="s">"FRENTE  "</span>) : vE ? F(<span class="s">"ESQUERDA"</span>) : vD ? F(<span class="s">"DIREITA "</span>) : F(<span class="s">"nenhum  "</span>));
+  Serial.print(F(<span class="s">"  linha esq="</span>));
+  Serial.print(bordaEsquerda() ? F(<span class="s">"BRANCO"</span>) : F(<span class="s">"preto"</span>));
+  Serial.print(F(<span class="s">" dir="</span>));
+  Serial.println(bordaDireita() ? F(<span class="s">"BRANCO"</span>) : F(<span class="s">"preto"</span>));
+}
+
+void imprimirManobras() {
+  Serial.print(F(<span class="s">"Motor "</span>));
+  Serial.print(RPM_MOTOR, 0);
+  Serial.print(F(<span class="s">" RPM x fator "</span>));
+  Serial.print(FATOR_VELOCIDADE, 2);
+  Serial.print(F(<span class="s">" -&gt; reta "</span>));
+  Serial.print(velRetaMmS, 0);
+  Serial.print(F(<span class="s">" mm/s, giro "</span>));
+  Serial.print(velGiroGrausS, 0);
+  Serial.println(F(<span class="s">" graus/s"</span>));
+  Serial.print(F(<span class="s">"Tempos em ms: re "</span>));
+  Serial.print(tReBorda);
+  Serial.print(F(<span class="s">", giro borda "</span>));
+  Serial.print(tGiroBorda);
+  Serial.print(F(<span class="s">"/"</span>));
+  Serial.print(tGiroBorda180);
+  Serial.print(F(<span class="s">", volta de busca "</span>));
+  Serial.print(tBuscaGiro);
+  Serial.print(F(<span class="s">", avanco de busca "</span>));
+  Serial.print(tBuscaAvanco);
+  Serial.print(F(<span class="s">", empurrao final "</span>));
+  Serial.println(tEmpurraoFinal);
+  if (TESTE_GIRO_360) {
+    Serial.println(F(<span class="s">"*** TESTE_GIRO_360 LIGADO: no Start da 1 volta e para. NAO USAR NA COMPETICAO ***"</span>));
+  }
+}
+
+void piscarLed(unsigned long periodoMs) {
+  digitalWrite(PINO_LED, (millis() / periodoMs) % 2 ? HIGH : LOW);
+}
+
+<span class="c">// ----------------------------------------------------------- setup/loop</span>
+const char* nomePino(uint8_t p, char* buf) {
+  if (p &gt;= A0) { buf[0] = 'A'; buf[1] = '0' + (p - A0); buf[2] = 0; }
+  else { buf[0] = 'D'; itoa(p, buf + 1, 10); }
+  return buf;
+}
+
+<span class="c">// Pinos em uso. Ficam de fora os SEM_PINO e, sem PWM, o ENA e o ENB.</span>
+uint8_t listarPinosUsados(uint8_t* lista) {
+  const uint8_t todos[] = { PINO_IR, PINO_LINHA_ESQ, PINO_LINHA_DIR, PINO_TRIG_ESQ,
+                            PINO_ECHO_ESQ, PINO_TRIG_DIR, PINO_ECHO_DIR, PINO_IN1,
+                            PINO_IN2, PINO_IN3, PINO_IN4, PINO_LED, PINO_ENA, PINO_ENB };
+  const uint8_t n = MOTOR_COM_PWM ? 14 : 12;
+  uint8_t k = 0;
+  for (uint8_t i = 0; i &lt; n; i++)
+    if (todos[i] != SEM_PINO) lista[k++] = todos[i];
+  return k;
+}
+
+bool pinoEmUso(uint8_t p) {
+  uint8_t lista[14];
+  uint8_t n = listarPinosUsados(lista);
+  for (uint8_t i = 0; i &lt; n; i++)
+    if (lista[i] == p) return true;
+  return false;
+}
+
+<span class="c">// Avisa no Monitor Serial se um pino foi usado duas vezes ou se nao serve.</span>
+void conferirPinos() {
+  uint8_t usados[14];
+  const uint8_t n = listarPinosUsados(usados);
+  if (!TEM_RE)
+    Serial.println(F(<span class="s">"ATENCAO: IN2/IN4 sem fio. O robo nao da re: foge da borda so girando."</span>));
+  char buf[5];
+  bool ok = true;
+  for (uint8_t i = 0; i &lt; n; i++) {
+    if (usados[i] &lt;= 1 || usados[i] == A6 || usados[i] == A7) {
+      Serial.print(F(<span class="s">"ERRO DE PINO: "</span>));
+      Serial.print(nomePino(usados[i], buf));
+      Serial.println(F(<span class="s">" nao serve (D0/D1 sao do USB; A6/A7 so leem sinal analogico)."</span>));
+      ok = false;
+    }
+    for (uint8_t j = i + 1; j &lt; n; j++) {
+      if (usados[i] != usados[j]) continue;
+      Serial.print(F(<span class="s">"ERRO DE PINO: "</span>));
+      Serial.print(nomePino(usados[i], buf));
+      Serial.println(F(<span class="s">" esta sendo usado duas vezes."</span>));
+      ok = false;
+    }
+  }
+  if (ok) Serial.println(F(<span class="s">"Pinos conferidos: nenhum repetido."</span>));
+}
+
+void setup() {
+  <span class="c">// Motores desligados antes de qualquer outra coisa (Art. 41).</span>
+  const uint8_t saidasMotor[] = { PINO_IN1, PINO_IN2, PINO_IN3, PINO_IN4, PINO_ENA, PINO_ENB };
+  const uint8_t nSaidas = MOTOR_COM_PWM ? 6 : 4;   <span class="c">// sem PWM, ENA/ENB nao sao usados</span>
+  for (uint8_t i = 0; i &lt; nSaidas; i++) {
+    if (saidasMotor[i] == SEM_PINO) continue;
+    digitalWrite(saidasMotor[i], LOW);
+    pinMode(saidasMotor[i], OUTPUT);
+  }
+  <span class="c">// Pinos sem sensor em 0 V: se algum estiver ligado no L298N, nao fica solto.</span>
+  for (uint8_t i = 0; i &lt; sizeof(PINOS_EM_ZERO); i++) {
+    if (pinoEmUso(PINOS_EM_ZERO[i])) continue;
+    digitalWrite(PINOS_EM_ZERO[i], LOW);
+    pinMode(PINOS_EM_ZERO[i], OUTPUT);
+  }
+
+  digitalWrite(PINO_TRIG_ESQ, LOW);
+  digitalWrite(PINO_TRIG_DIR, LOW);
+  pinMode(PINO_TRIG_ESQ, OUTPUT);
+  pinMode(PINO_TRIG_DIR, OUTPUT);
+  pinMode(PINO_ECHO_ESQ, INPUT);
+  pinMode(PINO_ECHO_DIR, INPUT);
+  pinMode(PINO_LINHA_ESQ, INPUT);
+  pinMode(PINO_LINHA_DIR, INPUT);
+  pinMode(PINO_LED, OUTPUT);
+  digitalWrite(PINO_LED, LOW);
+
+  calcularManobras();
+  tUltimoIR = millis() - 1000UL;         <span class="c">// sem piscada falsa ao ligar</span>
+
+  if (DEBUG_SERIAL) {
+    Serial.begin(115200);
+    Serial.println(F(<span class="s">"Mini Sumo 95 (200 RPM) - INICIO. Tecla A = Ready, B = Start, C = Stop."</span>));
+    conferirPinos();
+    imprimirManobras();
+  }
+  IrReceiver.begin(PINO_IR, DISABLE_LED_FEEDBACK);
+  <span class="c">// Com o fio do receptor solto, o pino fica <span class="s">"no ar"</span> e capta os 60 Hz da rede</span>
+  <span class="c">// eletrica. O pull-up interno mantem o pino em HIGH (sem sinal) nesse caso.</span>
+  <span class="c">// Com o receptor ligado nao muda nada: a saida dele ja e puxada para HIGH.</span>
+  pinMode(PINO_IR, INPUT_PULLUP);
+}
+
+void loop() {
+  processarControle();
+
+  <span class="c">// Ao receber qualquer sinal infravermelho, o LED <span class="s">"L"</span> inverte por 150 ms.</span>
+  <span class="c">// Serve para ver, sem computador, se o receptor esta funcionando.</span>
+  bool piscadaIR = millis() - tUltimoIR &lt; 150;
+
+  switch (estado) {
+    case INICIO:                  <span class="c">// LED apagado</span>
+      manterParado();
+      digitalWrite(PINO_LED, piscadaIR ? HIGH : LOW);
+      atualizarUltrassom();       <span class="c">// sensores ja lendo: no Start o alvo esta travado</span>
+      if (DEBUG_SERIAL) imprimirSensores();
+      break;
+    case READY:                   <span class="c">// LED pisca devagar</span>
+      manterParado();
+      piscarLed(500);
+      if (piscadaIR) digitalWrite(PINO_LED, !digitalRead(PINO_LED));
+      atualizarUltrassom();
+      if (DEBUG_SERIAL) imprimirSensores();
+      break;
+    case START:                   <span class="c">// LED pisca rapido</span>
+      piscarLed(100);
+      lutar();
+      break;
+    case STOP:                    <span class="c">// nunca chega aqui: encerrar() nao retorna</span>
+      manterParado();
+      break;
+  }
+}
+</code></pre>
+    </details>
+  </section>
+
+  <section id="problemas">
+    <div class="cabeca">
+      <p class="eyebrow">O que deu errado</p>
+      <h2>Problemas</h2>
+      <p>Cada um foi encontrado testando o robô. A causa quase nunca era onde parecia.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Modelo 3D · 11 set</p>
+      <h3>As duas partes da carcaça não encaixavam</h3>
+      <p class="causa"><b>Causa</b>A carcaça de fora não tinha os furos dos HC-SR04 que a outra parte pedia. Sem os furos, os transdutores não passavam e o sensor não enxergava nada.</p>
+      <p class="solucao"><b>Solução</b>Furos dos transdutores na parede da frente e um alívio lateral para a placa entrar por dentro.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Modelo 3D · 12 set</p>
+      <h3>A placa do sensor travava antes de chegar nos furos</h3>
+      <p class="causa"><b>Causa</b>No primeiro desenho o alívio lateral era mais curto que o curso de 12 mm da placa.</p>
+      <p class="solucao"><b>Solução</b>Alívio de Y 21,4 a Y 36,1 nas duas paredes. <b style="display:inline;color:var(--bad)">A base antiga não serve</b> — só imprima a do Atom.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Modelo 3D · 12 set</p>
+      <h3>Peças impossíveis de imprimir e um pilar no caminho</h3>
+      <p class="causa"><b>Causa</b>Os afastadores dos HC-SR04 ficavam no ar, sem nada embaixo, e um pilar de Ø10 mm invadia 98,7 mm³ do espaço de um transdutor.</p>
+      <p class="solucao"><b>Solução</b>Afastadores fundidos na parede lateral e na nervura central; pilares de Ø9 mm reposicionados. Uma auditoria automática dos STLs passou a conferir toda interferência entre peças.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Gravação · 19 set</p>
+      <h3>"not in sync: resp=0x98" — não gravava de jeito nenhum</h3>
+      <p class="causa"><b>Causa</b>A IDE estava configurada em <i>ATmega328P (Old Bootloader)</i>, mas o Nano do robô usa o bootloader novo.</p>
+      <p class="solucao"><b>Solução</b>Processador ATmega328P (bootloader novo), gravado no <code>sketch.yaml</code> para não errar de novo.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Controle · 19 set</p>
+      <h3>O robô ligava, mas ignorava o controle</h3>
+      <p class="causa"><b>Causa</b>O código esperava o receptor no D2. O fio estava no D12. O D2, solto, captava o zumbido de 60 Hz da rede elétrica e o programa via quadros infravermelhos que não existiam.</p>
+      <p class="solucao"><b>Solução</b>Um programa só para varrer os pinos (<code>descobrir_pinos</code>) achou o receptor no D12 e cada par TRIG/ECHO. Todos os pinos foram remapeados, e o pino do receptor passou a ligar o pull-up interno para não captar zumbido quando o fio se solta.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Motores · 21 set</p>
+      <h3>Um motor girava sozinho, o outro nem se mexia</h3>
+      <p class="causa"><b>Causa</b>O pull-up do receptor no D2 mantinha a entrada do L298N em nível alto: o motor ligava sozinho. E só o D2 estava sendo acionado como motor.</p>
+      <p class="solucao"><b>Solução</b>Depois do remapeamento, D2 e D6 viraram as saídas dos dois motores, e os pinos que sobraram ficam forçados em 0 V para nenhuma entrada da ponte H ficar solta.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Motores · 21 set</p>
+      <h3>As rodas giravam para trás</h3>
+      <p class="causa"><b>Causa</b>Cada motor tem um fio só ligado (IN1 e IN3). Com um fio só não existe "sentido contrário" no código.</p>
+      <p class="solucao"><b>Solução</b>Trocar os fios no L298N. Ficou registrado no código: <code>TEM_RE = false</code>, e a fuga da borda passou a ser feita girando com uma roda só, com o dobro do tempo.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Peças · montagem</p>
+      <h3>A ponte H queimou a saída do motor direito</h3>
+      <p class="causa"><b>Causa</b>Uma das pontes do L298N foi embora. O motor e os fios estavam bons: era a saída do lado direito que tinha queimado.</p>
+      <p class="solucao"><b>Solução</b>Trocar a ponte H inteira. Fica a dica para a próxima: antes de culpar o código, teste o motor direto na outra saída da ponte.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Peças · montagem</p>
+      <h3>Queimamos os motores soldando</h3>
+      <p class="causa"><b>Causa</b>Medo de soldar errado. A gente demorou demais com o ferro encostado e o calor acabou com os motores.</p>
+      <p class="solucao"><b>Solução</b>Comprar motores novos — e perder o medo. Depois desse prejuízo a equipe soldou o Arduino inteiro sozinha, sem ajuda. Solda é rápida: encostar, molhar de estanho e tirar.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Rodas · 22 set · véspera da qualificação</p>
+      <h3>O pneu não tinha atrito: a roda mal encostava no chão</h3>
+      <p class="causa"><b>Causa</b>A barriga do chassi tocava o chão antes das rodas. O plástico raspando vira alavanca, tira o peso de cima do pneu e o robô fica patinando no lugar, sem empurrar ninguém. A gente lixou e cortou a saia lateral, e não adiantou: o assoalho continuava batendo.</p>
+      <p class="solucao"><b>Solução</b>Em vez de baixar o chassi, levantar o robô engrossando a roda. A primeira ideia foi vestir um balão de festa na roda — não deu certo, a roda não segurava o balão, ele escorregava. O que funcionou foi mais simples: <b>umas dez borrachinhas em volta da calota de cada roda</b>, uma do lado da outra, e o pneu por cima. A roda ganhou alguns milímetros de raio, a barriga saiu do chão e a borracha passou a cravar na arena. Funcionou de primeira, um dia antes da qualificação.</p>
+      <p class="solucao"><b>Onde isso foi parar</b>A lista de ideias pesquisada tinha coisa mais cara e mais demorada: roda maior, pneu de silicone, rebaixar os motores no chassi, calço embaixo do motor, fita isolante. A que resolveu foi a mais boba e a que dava para fazer na véspera.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Sensores · 21 set</p>
+      <h3>O ultrassom não achava o inimigo</h3>
+      <p class="causa"><b>Causa</b>A medição contava o tempo desde o disparo, mas o HC-SR04 demora de 0,5 a 2 ms só para começar a responder — esse tempo entrava na conta e estourava o alcance. Além disso, quando o sensor estava ocupado, a leitura vazia zerava a confiança.</p>
+      <p class="solucao"><b>Solução</b>A medição só começa a contar quando o ECHO sobe; "sensor ocupado" virou um estado diferente de "não tem nada"; a confiança passou a ser de 0 a 3, perdendo 1 por falha em vez de zerar; e no giro de busca o robô para um instante para confirmar o que apareceu.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Luta · 22 set</p>
+      <h3>O robô saía da arena atrás do inimigo</h3>
+      <p class="causa"><b>Causa</b>Ver o inimigo cancelava a fuga da borda. Como o robô não dá ré, a fuga é um giro demorado, e o ataque interrompia esse giro no meio — em cima da linha branca.</p>
+      <p class="solucao"><b>Solução</b>Enquanto um sensor vê branco, nada interrompe a fuga. O ataque só pode voltar depois de sair do branco e de girar pelo menos metade da fuga.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Luta · 22 set</p>
+      <h3>Ele empurrava de pouco em pouco</h3>
+      <p class="causa"><b>Causa</b>Colado no inimigo o ultrassom para de medir. O código desistia depois de 0,5 s sem leitura, voltava a procurar, parava, girava, achava o inimigo de novo e empurrava mais um pouco.</p>
+      <p class="solucao"><b>Solução</b>Ataque travado: se o inimigo foi visto a até 15 cm, o robô continua empurrando reto por até 3 s sem leitura nenhuma. Só a borda interrompe.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Luta · 22 set</p>
+      <h3>Giro infinito: ele fugia de uma borda que não existia</h3>
+      <p class="causa"><b>Causa</b>Sensor de linha desregulado. Travado no branco, ou piscando entre branco e preto em cima do preto, ele faz o robô fugir para sempre. Numa conferência com o robô parado, um dos sensores marcou branco em 47 de 51 leituras.</p>
+      <p class="solucao"><b>Solução</b>Filtro em três partes: branco só vale depois de 20 ms seguidos; piscadas de preto com menos de 0,3 s não contam como "saiu do branco"; e branco por mais de 3 s, contando as piscadas, marca o sensor como desregulado — ele é ignorado até ler preto firme. O certo, mesmo assim, é regular o trimpot.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Energia · 21 set</p>
+      <h3>A bateria não chegou</h3>
+      <p class="causa"><b>Causa</b>Os Correios entraram em greve e a bateria comprada pela internet não chegou. Sem prazo para pedir outra e esperar.</p>
+      <p class="solucao"><b>Solução</b>Correr atrás em loja física. Achamos na Eletrolândia, na Av. Carlos Lindenberg, 4986, Jardim Marilândia — 5,7 km da UVV, do outro lado de Vila Velha, e o único lugar da região que vende esse tipo de componente. Foram mais de duas viagens até lá. Plano B montado na hora: duas 18650 em série com um LM2596 regulando 5,0 V para o Nano e os sensores. O plano C, caso faltassem, era um pacote de pilhas AA/AAA ligadas em série — melhor que a bateria quadrada de 9 V, que entrega pouca corrente e cai rápido com dois motores puxando.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Robô novo · 23 set</p>
+      <h3>A placa do segundo robô não aceita gravação</h3>
+      <p class="causa"><b>Causa</b>Ela não reinicia sozinha quando o computador manda gravar. O gravador tenta falar com o bootloader e não recebe resposta nenhuma, em nenhuma velocidade.</p>
+      <p class="solucao"><b>Solução</b>Gravar apertando o botão RESET da placa no momento em que a gravação começa. Ficou um programa de espera pronto para isso: ele fica chamando o bootloader e grava no instante em que a placa responde.</p>
+    </div>
+
+    <div class="problema">
+      <p class="etiqueta">Arquivos · 23 set</p>
+      <h3>A pasta do projeto sumiu do computador</h3>
+      <p class="causa"><b>Causa</b>A pasta da área de trabalho apareceu vazia, com os arquivos ainda na nuvem do OneDrive.</p>
+      <p class="solucao"><b>Solução</b>Os três códigos foram reconstruídos a partir dos arquivos que a compilação deixa no computador, e conferidos byte a byte com os tamanhos originais. O backup 2 está inteiro nesta página.</p>
+    </div>
+  </section>
+
+  <section id="energia">
+    <div class="cabeca">
+      <p class="eyebrow">Alimentação</p>
+      <h2>Energia</h2>
+    </div>
+
+    <h3>A bateria que virou viagem</h3>
+    <div class="corpo">
+      <p>A bateria foi comprada pela internet e não chegou: os <b>Correios entraram em greve</b>
+        e o pacote parou no caminho. Não dava mais para pedir outra e esperar — a competição
+        tinha data marcada.</p>
+      <p>A saída foi loja física. E, para componente de eletrônica, o lugar é a
+        <b>Eletrolândia</b>, na Avenida Carlos Lindenberg, 4986, no Jardim Marilândia: do outro
+        lado de Vila Velha em relação à UVV. São <b>5,7 km</b> de avenida — 11 minutos de carro,
+        38 de ônibus. Fomos lá <b>mais de duas vezes</b>, porque cada peça que queimava ou
+        faltava só tinha naquela loja.</p>
+    </div>
+
+    <div class="figura" style="margin-top:18px" role="img"
+         aria-label="Mapa do trajeto da UVV, em Boa Vista, até a Eletrolândia, na Avenida Carlos Lindenberg, 4986, Jardim Marilândia: 5,7 km pela Avenida Carlos Lindenberg, 11 minutos de carro e 38 de ônibus.">
+      <svg viewBox="0 0 760 430" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace">
+        <rect x="0" y="0" width="760" height="430" fill="var(--surface2)"/>
+
+        <path d="M0 0 L330 0 C 280 44, 220 74, 150 92 C 92 106, 44 102, 0 116 Z"
+              fill="var(--data-soft)" stroke="var(--data)" stroke-width="1.2"/>
+        <text x="96" y="46" fill="var(--data)" font-size="11">BAÍA DE VITÓRIA</text>
+
+        <path d="M712 66 L560 170 L400 235 L250 292 L108 334" stroke="var(--line2)" stroke-width="11"
+              fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+        <text x="300" y="300" fill="var(--ink2)" font-size="11.5" transform="rotate(-21 300 300)">AV. CARLOS LINDENBERG</text>
+
+        <path d="M690 300 L674 268 L642 250 L604 226 L560 170 L400 235 L250 292 L136 326"
+              stroke="var(--accent)" stroke-width="6" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+
+        <rect x="356" y="120" width="252" height="52" rx="7" fill="var(--surface)" stroke="var(--accent)"/>
+        <text x="482" y="142" text-anchor="middle" fill="var(--accent-ink)" font-size="15" font-weight="600">5,7 km · 11 min de carro</text>
+        <text x="482" y="161" text-anchor="middle" fill="var(--ink2)" font-size="12">38 min de ônibus · 18 de bicicleta · 1h12 a pé</text>
+
+        <text x="700" y="112" text-anchor="end" fill="var(--ink2)" font-size="11">GLÓRIA</text>
+        <text x="520" y="216" text-anchor="middle" fill="var(--ink2)" font-size="11">IBES</text>
+        <text x="330" y="252" text-anchor="middle" fill="var(--ink2)" font-size="11">ARIBIRI</text>
+
+        <circle cx="690" cy="300" r="10" fill="var(--surface)" stroke="var(--accent)" stroke-width="4"/>
+        <text x="672" y="322" text-anchor="end" fill="var(--ink)" font-size="13.5" font-weight="600">UVV</text>
+        <text x="672" y="338" text-anchor="end" fill="var(--ink2)" font-size="11">Av. Comissário</text>
+        <text x="672" y="352" text-anchor="end" fill="var(--ink2)" font-size="11">José Dantas de Melo, 21</text>
+        <text x="672" y="366" text-anchor="end" fill="var(--ink2)" font-size="11">Boa Vista</text>
+
+        <path d="M136 326 C 122 326, 112 336, 112 348 C 112 362, 136 384, 136 384 C 136 384, 160 362, 160 348 C 160 336, 150 326, 136 326 Z"
+              fill="var(--bad)" stroke="var(--surface)" stroke-width="2.5"/>
+        <circle cx="136" cy="347" r="6" fill="var(--surface)"/>
+        <text x="176" y="344" fill="var(--ink)" font-size="13.5" font-weight="600">Eletrolândia</text>
+        <text x="176" y="360" fill="var(--ink2)" font-size="11">Av. Carlos Lindenberg, 4986</text>
+        <text x="176" y="374" fill="var(--ink2)" font-size="11">Jardim Marilândia</text>
+
+        <line x1="470" y1="402" x2="570" y2="402" stroke="var(--ink2)" stroke-width="2"/>
+        <line x1="470" y1="396" x2="470" y2="408" stroke="var(--ink2)" stroke-width="2"/>
+        <line x1="570" y1="396" x2="570" y2="408" stroke="var(--ink2)" stroke-width="2"/>
+        <text x="520" y="392" text-anchor="middle" fill="var(--ink2)" font-size="11">1 km</text>
+
+        <g transform="translate(706,384)">
+          <path d="M0 -22 L7 7 L0 1 L-7 7 Z" fill="var(--ink2)"/>
+          <text x="0" y="24" text-anchor="middle" fill="var(--ink2)" font-size="11">N</text>
+        </g>
+      </svg>
+    </div>
+    <p style="color:var(--ink2); font-size:14px; margin-top:8px; max-width:66ch">
+      O trajeto é o mesmo que o mapa do celular mostrava: sair da UVV, pegar a Avenida Carlos
+      Lindenberg e atravessar Vila Velha inteira até o Jardim Marilândia. Desenho esquemático,
+      com as distâncias e os tempos reais.</p>
+
+    <h3>O que ficou no robô</h3>
+    <div class="corpo">
+      <p>O robô roda com <b>duas células 18650 em série</b> (7,4 V nominais) e um módulo
+        <b>LM2596</b> ajustado em 5,0 V para o Nano e os sensores. Os motores puxam direto da
+        bateria, pelo L298N.</p>
+      <p>Três cuidados que ficaram anotados: carregar 18650 só em carregador próprio de lítio;
+        não deixar o pacote cair abaixo de ~6,0 V no total; e ajustar o LM2596 <i>antes</i> de
+        ligar o Nano, medindo a saída com multímetro.</p>
+      <p>Se um dia faltar 18650, o plano é um pacote de pilhas em série — mais corrente e queda
+        de tensão muito menor que a da bateria quadrada de 9 V, que com dois motores não aguenta.</p>
+    </div>
+  </section>
+
+  <section id="novo">
+    <div class="cabeca">
+      <p class="eyebrow">Segundo robô</p>
+      <h2>O robô novo</h2>
+      <p>Mesma estratégia, outra fiação. O código dele saiu do backup 2, só trocando os pinos.</p>
+    </div>
+    <div class="tabela">
+      <table>
+        <thead><tr><th>Peça</th><th>No Arduino</th><th>Observação</th></tr></thead>
+        <tbody>
+          <tr><td class="txt">HC-SR04 esquerdo</td><td>A0 / A1</td><td class="txt">TRIG / ECHO</td></tr>
+          <tr><td class="txt">HC-SR04 direito</td><td>A2 / A3</td><td class="txt">TRIG / ECHO</td></tr>
+          <tr><td class="txt">Receptor infravermelho</td><td>A5</td><td class="txt">—</td></tr>
+          <tr><td class="txt">Motor esquerdo</td><td>frente D6 / ré D5</td><td class="txt">invertido: andava para trás</td></tr>
+          <tr><td class="txt">Motor direito</td><td>frente D10 / ré D9</td><td class="txt">invertido: andava para trás</td></tr>
+          <tr><td class="txt">Sensor de linha</td><td>não tem</td><td class="txt">esse robô não enxerga a borda</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="nota" style="margin-top:18px">
+      <b>Ele tem ré.</b> Como os quatro pinos da ponte H estão ligados, esse robô foge da borda
+      dando ré e girando com as duas rodas — metade do tempo do outro. Falta só resolver a
+      gravação pelo RESET e, se for competir, colocar sensores de linha.
+    </div>
+  </section>
+
+  <footer>
+    <p><b>O Atom ficou pronto.</b> Foi para a qualificação com o backup 2 gravado, as
+      borrachinhas nas rodas, os remendos, os parafusos à mostra e o cérebro de fios por cima.</p>
+    <p>Caderno montado em 23 de setembro de 2026 com os arquivos do projeto: os STLs do Atom,
+      as vistas geradas no OpenSCAD e o código gravado no robô. O modelo 3D desta página é o
+      próprio STL que foi para a impressora.</p>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="modelo_r5.js"></script>
+<script>
+(function(){
+  // ---------- índice ativo ----------
+  var secoes = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+  var links = {};
+  Array.prototype.forEach.call(document.querySelectorAll('nav.indice a'), function(a){
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(ents){
+      ents.forEach(function(e){
+        var a = links[e.target.id];
+        if (!a) return;
+        if (e.isIntersecting) {
+          Object.keys(links).forEach(function(k){ links[k].classList.remove('ativo'); });
+          a.classList.add('ativo');
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    secoes.forEach(function(s){ io.observe(s); });
+  }
+
+  // ---------- lupa das imagens ----------
+  document.addEventListener('click', function(ev){
+    var img = ev.target.closest ? ev.target.closest('figure img') : null;
+    if (!img) return;
+    var lupa = document.createElement('div');
+    lupa.className = 'lupa';
+    var grande = document.createElement('img');
+    grande.src = img.src; grande.alt = img.alt;
+    var legenda = document.createElement('p');
+    legenda.textContent = img.alt + ' — clique para fechar';
+    lupa.appendChild(grande); lupa.appendChild(legenda);
+    lupa.addEventListener('click', function(){ lupa.remove(); });
+    document.body.appendChild(lupa);
+    function esc(e){ if (e.key === 'Escape') { lupa.remove(); document.removeEventListener('keydown', esc); } }
+    document.addEventListener('keydown', esc);
+  });
+
+  // ---------- copiar código ----------
+  var btCopiar = document.getElementById('bt-copiar');
+  if (btCopiar) {
+    btCopiar.addEventListener('click', function(){
+      var txt = document.getElementById('codigo').innerText;
+      function ok(){ btCopiar.textContent = 'Copiado!'; setTimeout(function(){ btCopiar.textContent = 'Copiar código'; }, 1800); }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(txt).then(ok, fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); ok(); } catch(e){ btCopiar.textContent = 'Selecione e copie'; }
+        ta.remove();
+      }
+    });
+  }
+
+  // ---------- visualizador 3D ----------
+  var palco = document.getElementById('palco');
+  var aviso = document.getElementById('carregando');
+  if (!palco || typeof THREE === 'undefined' || !window.MODELO_R5) {
+    if (aviso) aviso.textContent = 'não deu para carregar o modelo 3D';
+    return;
+  }
+
+  function decodificar(b64){
+    var bin = atob(b64), n = bin.length, bytes = new Uint8Array(n);
+    for (var i = 0; i < n; i++) bytes[i] = bin.charCodeAt(i);
+    return new Uint16Array(bytes.buffer);
+  }
+  function malha(p, cor){
+    var q = decodificar(p.pos), idx = decodificar(p.idx), n = q.length / 3;
+    var pos = new Float32Array(q.length);
+    var e = [(p.max[0]-p.min[0])/65535, (p.max[1]-p.min[1])/65535, (p.max[2]-p.min[2])/65535];
+    for (var i = 0; i < n; i++){
+      pos[i*3]   = p.min[0] + q[i*3]   * e[0];
+      pos[i*3+1] = p.min[1] + q[i*3+1] * e[1];
+      pos[i*3+2] = p.min[2] + q[i*3+2] * e[2];
+    }
+    var g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setIndex(new THREE.BufferAttribute(idx, 1));
+    g.computeVertexNormals();
+    return new THREE.Mesh(g, new THREE.MeshPhongMaterial({
+      color: cor, shininess: 12, specular: 0x222222, flatShading: false
+    }));
+  }
+
+  var cena = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(34, 16/10, 1, 3000);
+  var render = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  render.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  palco.appendChild(render.domElement);
+
+  var base = malha(window.MODELO_R5.base, 0xcf7622);
+  var tampa = malha(window.MODELO_R5.tampa, 0xc3c9d2);
+  tampa.position.z = 34;                     // a tampa assenta em cima da base
+
+  var pecas = new THREE.Group();
+  pecas.add(base); pecas.add(tampa);
+  pecas.position.set(-47.5, -47.5, -22.6);   // centro do robô na origem
+
+  var modelo = new THREE.Group();
+  modelo.rotation.x = -Math.PI / 2;          // o STL é Z para cima; a cena é Y para cima
+  modelo.add(pecas);
+  cena.add(modelo);
+
+  cena.add(new THREE.HemisphereLight(0xffffff, 0x444a55, 0.75));
+  var sol = new THREE.DirectionalLight(0xffffff, 0.72); sol.position.set(120, 180, 90); cena.add(sol);
+  var preenche = new THREE.DirectionalLight(0xffffff, 0.3); preenche.position.set(-130, 60, -110); cena.add(preenche);
+
+  var vista = { giro: -0.62, altura: 1.08, raio: 235, separar: 0 };
+  var inicial = { giro: -0.62, altura: 1.08, raio: 235 };
+  var girando = true;
+  var parado = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (parado) girando = false;
+
+  function posicionar(){
+    vista.altura = Math.max(0.12, Math.min(Math.PI - 0.12, vista.altura));
+    vista.raio = Math.max(105, Math.min(520, vista.raio));
+    camera.position.set(
+      vista.raio * Math.sin(vista.altura) * Math.sin(vista.giro),
+      vista.raio * Math.cos(vista.altura),
+      vista.raio * Math.sin(vista.altura) * Math.cos(vista.giro)
+    );
+    camera.lookAt(0, 0, 0);
+  }
+  function medir(){
+    var l = palco.clientWidth, a = palco.clientHeight;
+    if (!l || !a) return;
+    camera.aspect = l / a; camera.updateProjectionMatrix();
+    render.setSize(l, a, false);
+  }
+  function quadro(){
+    if (girando) vista.giro += 0.0026;
+    var alvo = tampa.visible ? vista.separar : 0;
+    tampa.position.z += (34 + alvo * 30 - tampa.position.z) * 0.12;
+    posicionar();
+    render.render(cena, camera);
+    requestAnimationFrame(quadro);
+  }
+  medir(); posicionar();
+  if (aviso) aviso.remove();
+  quadro();
+  window.addEventListener('resize', medir);
+
+  // arrastar
+  var arrastando = false, ultimoX = 0, ultimoY = 0;
+  palco.addEventListener('pointerdown', function(e){
+    arrastando = true; girando = false; ultimoX = e.clientX; ultimoY = e.clientY;
+    palco.classList.add('arrastando'); palco.setPointerCapture(e.pointerId);
+  });
+  palco.addEventListener('pointermove', function(e){
+    if (!arrastando) return;
+    vista.giro -= (e.clientX - ultimoX) * 0.008;
+    vista.altura -= (e.clientY - ultimoY) * 0.008;
+    ultimoX = e.clientX; ultimoY = e.clientY;
+  });
+  function soltar(e){
+    arrastando = false; palco.classList.remove('arrastando');
+    if (e && e.pointerId != null && palco.hasPointerCapture && palco.hasPointerCapture(e.pointerId))
+      palco.releasePointerCapture(e.pointerId);
+  }
+  palco.addEventListener('pointerup', soltar);
+  palco.addEventListener('pointercancel', soltar);
+  palco.addEventListener('wheel', function(e){
+    e.preventDefault(); girando = false;
+    vista.raio += e.deltaY * 0.28;
+  }, { passive: false });
+
+  // setas
+  function mexer(dgiro, daltura, draio){
+    girando = false;
+    vista.giro += dgiro; vista.altura += daltura; vista.raio += draio;
+  }
+  document.getElementById('bt-esq').onclick   = function(){ mexer(-0.26, 0, 0); };
+  document.getElementById('bt-dir').onclick   = function(){ mexer(0.26, 0, 0); };
+  document.getElementById('bt-cima').onclick  = function(){ mexer(0, -0.2, 0); };
+  document.getElementById('bt-baixo').onclick = function(){ mexer(0, 0.2, 0); };
+  document.getElementById('bt-mais').onclick  = function(){ mexer(0, 0, -34); };
+  document.getElementById('bt-menos').onclick = function(){ mexer(0, 0, 34); };
+  palco.addEventListener('keydown', function(e){
+    var t = { ArrowLeft:[-0.26,0,0], ArrowRight:[0.26,0,0], ArrowUp:[0,-0.2,0], ArrowDown:[0,0.2,0] }[e.key];
+    if (!t) return;
+    e.preventDefault(); mexer(t[0], t[1], t[2]);
+  });
+
+  var btSeparar = document.getElementById('bt-separar');
+  btSeparar.onclick = function(){
+    var ligado = btSeparar.getAttribute('aria-pressed') === 'true';
+    btSeparar.setAttribute('aria-pressed', ligado ? 'false' : 'true');
+    vista.separar = ligado ? 0 : 1;
+    if (!ligado && !tampa.visible) btTampa.onclick();
+  };
+  var btTampa = document.getElementById('bt-tampa');
+  btTampa.onclick = function(){
+    var ligado = btTampa.getAttribute('aria-pressed') === 'true';
+    btTampa.setAttribute('aria-pressed', ligado ? 'false' : 'true');
+    tampa.visible = !ligado;
+    btTampa.textContent = ligado ? 'Mostrar tampa' : 'Tampa';
+  };
+  document.getElementById('bt-reset').onclick = function(){
+    vista.giro = inicial.giro; vista.altura = inicial.altura; vista.raio = inicial.raio;
+    vista.separar = 0; girando = !parado;
+    btSeparar.setAttribute('aria-pressed', 'false');
+    if (!tampa.visible) btTampa.onclick();
+  };
+})();
+</script>
+<script src="modelo_r5.js"></script>
+
+</body>
+</html>
