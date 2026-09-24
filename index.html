@@ -183,6 +183,16 @@
 
   /* ---------- galeria ---------- */
   .galeria{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .videos{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); align-items:start}
+  .videos video{display:block; width:100%; aspect-ratio:464/832; background:#000}
+  .placar{
+    margin-top:22px; display:flex; flex-wrap:wrap; gap:10px 26px; align-items:baseline;
+    background:var(--good-soft); border:1px solid color-mix(in srgb, var(--good) 35%, transparent);
+    border-radius:8px; padding:14px 16px;
+  }
+  .placar b{font-family:var(--display); color:var(--good); font-size:15px}
+  .placar span{font-size:15px; color:var(--ink)}
+  .placar .amanha{color:var(--ink2)}
   figure{margin:0; background:var(--surface); border:1px solid var(--line); border-radius:8px; overflow:hidden}
   figure img{display:block; width:100%; background:#fff; cursor:zoom-in}
   figcaption{padding:9px 12px; font-size:13.5px; color:var(--ink2); border-top:1px solid var(--line)}
@@ -266,6 +276,11 @@
     <p class="sub">O caderno do nosso mini sumô: o robô de 95 × 95 mm, a eletrônica, o código que
       está gravado hoje e, principalmente, cada problema que apareceu no caminho e como a gente
       resolveu. De 11 a 23 de setembro de 2026.</p>
+    <div class="placar">
+      <b>23 de setembro · classificado</b>
+      <span>venceu todas as partidas do dia</span>
+      <span class="amanha">24 de setembro · oitavas de final</span>
+    </div>
     <dl class="ficha">
       <div><dt>Nome</dt><dd>Atom <small>apelido: Frankenstein</small></dd></div>
       <div><dt>Tamanho</dt><dd class="num">95 × 95 mm <small>limite: 100</small></dd></div>
@@ -284,6 +299,7 @@
   <ul>
     <li><a href="#robo3d">Robô em 3D</a></li>
     <li><a href="#frankenstein">Frankenstein</a></li>
+    <li><a href="#competicao">A competição</a></li>
     <li><a href="#equipe">Equipe</a></li>
     <li><a href="#tempo">Linha do tempo</a></li>
     <li><a href="#modelo">Modelo 3D</a></li>
@@ -408,6 +424,50 @@
     </div>
   </section>
 
+  <section id="competicao">
+    <div class="cabeca">
+      <p class="eyebrow">23 de setembro · dia de luta</p>
+      <h2>O Atom no dojô</h2>
+      <p>Primeiro dia de competição: ganhou todas.</p>
+    </div>
+
+    <div class="corpo">
+      <p>Algumas vitórias vieram por <b>W.O.</b>, com o adversário não conseguindo entrar no
+        dojô. As outras foram no empurrão mesmo: <b>força de motor e código</b>. O ataque reto,
+        com as duas rodas na mesma potência, e o ataque travado segurando o empurrão até o
+        oponente sair do círculo — que é exatamente o que a gente passou a semana ajustando.</p>
+      <p>Nos vídeos abaixo dá para ver o comportamento que foi programado: ele acha o adversário,
+        vai reto e não solta. <b>Estão sem áudio, só a luta.</b></p>
+    </div>
+
+    <div class="videos" style="margin-top:20px">
+      <figure>
+        <video src="video/batalha1.mp4" controls muted playsinline preload="metadata"
+               aria-label="Primeira luta do Atom no dojô"></video>
+        <figcaption><b>Luta 1</b>O ataque reto: achou, foi em cima e empurrou até o fim.</figcaption>
+      </figure>
+      <figure>
+        <video src="video/batalha2.mp4" controls muted playsinline preload="metadata"
+               aria-label="Segunda luta do Atom no dojô"></video>
+        <figcaption><b>Luta 2</b>Mais um empurrão levado até a borda do círculo.</figcaption>
+      </figure>
+    </div>
+
+    <h3>O robô na arena</h3>
+    <div class="galeria">
+      <figure><img src="img/fotos/atom_arena_frente.jpg" alt="O Atom de frente no tatame azul da arena, com os quatro transdutores à mostra" loading="lazy">
+        <figcaption><b>Pronto para lutar</b>Os quatro furos dos transdutores e a etiqueta da equipe na frente.</figcaption></figure>
+      <figure><img src="img/fotos/atom_arena_lado.jpg" alt="O Atom de lado, mostrando a rampa e a eletrônica embrulhada em cima" loading="lazy">
+        <figcaption><b>De perfil</b>A rampa na frente e toda a eletrônica embrulhada por cima, presa com fita.</figcaption></figure>
+      <figure><img src="img/fotos/atom_arena_diagonal.jpg" alt="O Atom visto de cima na diagonal, com os fios e o receptor infravermelho" loading="lazy">
+        <figcaption><b>Por cima</b>O receptor infravermelho de pé, virado para o alto, como a regra exige.</figcaption></figure>
+      <figure><img src="img/fotos/bateria_18650.jpg" alt="Duas células 18650 roxas no suporte, embrulhadas em fita" loading="lazy">
+        <figcaption><b>A energia</b>As duas 18650 em série no suporte, embaladas em fita — o plano B que virou definitivo.</figcaption></figure>
+      <figure><img src="img/fotos/equipe_arena.jpg" alt="Quatro integrantes da equipe sentados na arquibancada segurando o robô" loading="lazy">
+        <figcaption><b>A equipe</b>Na arquibancada, entre uma luta e outra, com o Atom na mão.</figcaption></figure>
+    </div>
+  </section>
+
   <section id="equipe">
     <div class="cabeca">
       <p class="eyebrow">InovaWeek · UVV · Vila Velha (ES)</p>
@@ -519,6 +579,15 @@
     </div>
 
     <div class="ata">
+      <div class="quando"><b>24 set</b>oitavas de final</div>
+      <div>
+        <h3>Próximo round</h3>
+        <p>O Atom volta ao dojô para as oitavas, com o mesmo código que venceu ontem: backup 2,
+          ataque travado e a borda com prioridade. <i>O resultado entra aqui depois.</i></p>
+      </div>
+    </div>
+
+    <div class="ata">
       <div class="quando"><b>23 set</b>dia da qualificação</div>
       <div>
         <h3>Hoje é o dia</h3>
@@ -527,7 +596,8 @@
         <p>De manhã ainda deu tempo de adaptar o código para o segundo robô, o de sucata, que
           tem outra fiação: ultrassons nos pinos analógicos, ponte H com ré e sem sensor de
           linha. A gravação dele esbarrou numa placa que não reinicia sozinha.</p>
-        <p><i>O resultado da quali entra aqui depois.</i></p>
+        <p><b>Resultado: ganhou todas as partidas do dia.</b> Algumas por W.O. e as outras no
+          empurrão, com força de motor e o ataque reto do código. Classificado.</p>
       </div>
     </div>
   </section>
